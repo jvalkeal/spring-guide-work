@@ -1,0 +1,136 @@
+---
+tags: [hadoop,yarn,xd]
+projects: [spring-hadoop]
+---
+:spring_version: 4.0.0.RELEASE
+:spring_boot_version: 1.0.0.RC1
+:spring_hadoop_version: 2.0.0.M4-hadoop22
+:java_version: 1.6
+:Component: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/stereotype/Component.html
+:Controller: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/stereotype/Controller.html
+:DispatcherServlet: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/web/servlet/DispatcherServlet.html
+:SpringApplication: http://docs.spring.io/spring-boot/docs/{spring_boot_version}/api/org/springframework/boot/SpringApplication.html
+:ResponseBody: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/web/bind/annotation/ResponseBody.html
+:EnableAutoConfiguration: http://docs.spring.io/spring-boot/docs/{spring_boot_version}/api/org/springframework/boot/autoconfigure/EnableAutoConfiguration.html
+:YarnClient: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/yarn/client/YarnClient.html
+:toc:
+:icons: font
+:source-highlighter: prettify
+:project_id: gs-yarn-boot-simple
+This guide walks you through the process of creating a Spring Hadoop YARN application.
+
+== What you'll build
+
+You'll build a simple Hadoop YARN application with Spring Hadoop and Spring Boot.
+
+
+== What you'll need
+
+ - About 15 minutes
+ - A favorite text editor or IDE
+ - http://www.oracle.com/technetwork/java/javase/downloads/index.html[JDK {java_version}] or later
+ - http://www.gradle.org/downloads[Gradle 1.8+]
+ - Cluster or local single-node instance based on Hadoop 2.2.0 or later
+ - You can also import the code from this guide as well as view the web page directly into link:/guides/gs/sts[Spring Tool Suite (STS)] and work your way through it from there.
+
+include::https://raw.github.com/spring-guides/getting-started-macros/master/how_to_complete_this_guide.adoc[]
+
+
+[[scratch]]
+== Set up the project
+
+include::https://raw.github.com/spring-guides/getting-started-macros/master/build_system_intro.adoc[]
+
+=== Create the directory structure
+
+In a project directory of your choosing, create the following subdirectory structure; for example, with `mkdir -p src/main/java/hello` on *nix systems:
+
+    └── src
+        └── main
+            ├── resources
+            └── java
+                └── hello
+                    ├── client
+                    ├── appmaster
+                    └── container
+
+
+include::https://raw.github.com/spring-guides/getting-started-macros/master/create_both_builds.adoc[]
+
+`build.gradle`
+[source,java]
+----
+include::initial/build.gradle[]
+----
+
+include::https://raw.github.com/spring-guides/getting-started-macros/master/bootstrap_starter_pom_disclaimer.adoc[]
+
+== Hadoop YARN Intro
+
+If you have been following the Hadoop community over the past year or two, you’ve probably seen a lot of discussions around YARN and the next version of Hadoop's MapReduce called MapReduce v2. YARN (Yet Another Resource Negotiator) is a component of the MapReduce project created to overcome some performance issues in Hadoop's original design. The fundamental idea of MapReduce v2 is to split the functionalities of the JobTracker, Resource Management and Job Scheduling/Monitoring, into separate daemons. The idea is to have a global Resource Manager (RM) and a per-application Application Master (AM). A generic diagram for YARN component dependencies can be found from YARN architecture.
+
+MapReduce Version 2 is an application running on top of YARN. It is also possible to make similar custom YARN based application which have nothing to do with MapReduce, it is simply running YARN application. However, writing a custom YARN based application is difficult. The YARN APIs are low-level infrastructure APIs, not high-level developer APIs.
+
+== Spring YARN Intro
+
+At a high level, Spring YARN provides three different components, {YarnClient}[`YarnClient`], YarnAppmaster and YarnContainer which together can be called a Spring YARN Application. We provide default implementations for all components while still giving the end user an option to customize as much as he or she wants.
+
+[[initial]]
+== Create a Yarn Client
+
+Create a new Yarn Client for your Spring application:
+
+`src/main/java/hello/client/ClientApplication.java`
+[source,java]
+----
+include::complete/src/main/java/hello/client/ClientApplication.java[]
+----
+
+== Create a Yarn Appmaster
+
+Create a new Yarn Appmaster for your Spring application:
+
+`src/main/java/hello/appmaster/AppmasterApplication.java`
+[source,java]
+----
+include::complete/src/main/java/hello/appmaster/AppmasterApplication.java[]
+----
+
+== Create a Yarn Container
+
+Create a new Yarn Container for your Spring application:
+
+`src/main/java/hello/container/ContainerApplication.java`
+[source,java]
+----
+include::complete/src/main/java/hello/container/ContainerApplication.java[]
+----
+
+`src/main/java/hello/container/HelloPojo.java`
+[source,java]
+----
+include::complete/src/main/java/hello/container/HelloPojo.java[]
+----
+
+== Create an Application Configuration
+
+Create a new yaml configuration file.
+
+`src/main/resources/application.yml`
+[source,yaml]
+----
+include::complete/src/main/resources/application.yml[]
+----
+
+
+== Test the application
+
+Now that the application is running, you can test it.
+
+
+== Summary
+
+Congratulations! You've just developed a Spring application! 
+
+
+

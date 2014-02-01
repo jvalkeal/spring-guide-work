@@ -1,0 +1,15 @@
+.gradle
+bin
+build
+.settings
+.classpath
+.springBeans
+.project
+*.iml
+*.ipr
+*.iws
+metastore_db
+/.idea/
+.DS_Store
+/out/
+target
