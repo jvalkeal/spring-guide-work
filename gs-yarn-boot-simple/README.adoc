@@ -71,7 +71,7 @@ In this guide we are going to show how these 3 components, {YarnClient}[`YarnCli
 [[scratch]]
 == Set up the project
 
-include::https://raw.github.com/spring-guides/getting-started-macros/master/build_system_intro.adoc[]
+First you set up a basic build script. You can use any build system you like when building apps with Spring, but the code you need to work with http://gradle.org[Gradle] is included here. If you're not familiar with it, refer to link:/guides/gs/gradle[Building Java Projects with Gradle].
 
 === Create the directory structure
 
@@ -87,15 +87,14 @@ In a project directory of your choosing, create the following subdirectory struc
                     └── container
 
 
-include::https://raw.github.com/spring-guides/getting-started-macros/master/create_both_builds.adoc[]
+=== Create a Gradle build file
+Below is the https://github.com/spring-guides/{project_id}/blob/master/initial/build.gradle[initial Gradle build file]. If you are using link:/guides/gs/sts[Spring Tool Suite (STS)], you can import the guide directly.
 
 `build.gradle`
 [source,java]
 ----
 include::initial/build.gradle[]
 ----
-
-include::https://raw.github.com/spring-guides/getting-started-macros/master/bootstrap_starter_pom_disclaimer.adoc[]
 
 [[initial]]
 == Create a Yarn Client
@@ -171,22 +170,63 @@ Create a new yaml configuration file.
 include::complete/src/main/resources/application.yml[]
 ----
 
+NOTE: Pay attention to a `yaml` file format which expects correct indentation and no tab characters.
+
 Final part for your application is its runtime configuration which glues all the components together which then can be called as a Spring YARN application. This configuration act as source for Spring Boot's {ConfigurationProperties}[`@ConfigurationProperties`] and contains relevant configuration properties which cannot be auto-discovered or otherwise needs to have an option to be overwritten by an end user.
 
 You can then write your own defaults for your own environment. Because these {ConfigurationProperties}[`@ConfigurationProperties`] are resolved at runtime by Spring Boot, you even have an easy option to overwrite these properties either by using command-line options or provide additional configuration property files.
 
 == Run the application
 
-Now that the you've successfully compiled and packaged your application, it's time to do the fun part and execute it on Hadoop YARN.
+Now that you've successfully compiled and packaged your application, it's time to do the fun part and execute it on a Hadoop YARN.
+
+Below listing shows files after a succesfull gradle build.
+
+[source]
+----
+$ ls -lt build/libs/
+-rw-r--r-- 1 hadoop hadoop 35975001 Feb  2 17:39 gs-yarn-boot-simple-container-0.1.0.jar
+-rw-r--r-- 1 hadoop hadoop 35973937 Feb  2 17:39 gs-yarn-boot-simple-client-0.1.0.jar
+-rw-r--r-- 1 hadoop hadoop 35973840 Feb  2 17:39 gs-yarn-boot-simple-appmaster-0.1.0.jar
+----
+
+Simply run your executable client jar.
+
+[source]
+----
+$ java -jar build/libs/gs-yarn-boot-simple-client-0.1.0.jar
+----
+
+Using a Resource Manager UI you can see status of an application.
+
+image::rm-ui.png[Resource Manager UI]
+
+To find Hadoop's application logs, do a little find within a configured userlogs directory.
+
+[source]
+----
+$ find hadoop/logs/userlogs/|grep std
+
+hadoop/logs/userlogs/application_1391348442831_0001/container_1391348442831_0001_01_000002/Container.stdout
+hadoop/logs/userlogs/application_1391348442831_0001/container_1391348442831_0001_01_000002/Container.stderr
+hadoop/logs/userlogs/application_1391348442831_0001/container_1391348442831_0001_01_000001/Appmaster.stdout
+hadoop/logs/userlogs/application_1391348442831_0001/container_1391348442831_0001_01_000001/Appmaster.stderr
+----
+
+Grep logging output from a `HelloPojo` class.
+
+[source]
+----
+$ grep HelloPojo hadoop/logs/userlogs/application_1391348442831_0001/container_1391348442831_0001_01_000002/Container.stdout
+
+[2014-02-02 17:40:38,314] boot - 11944  INFO [main] --- HelloPojo: Hello from HelloPojo
+[2014-02-02 17:40:38,315] boot - 11944  INFO [main] --- HelloPojo: About to list from hdfs root content
+[2014-02-02 17:40:41,134] boot - 11944  INFO [main] --- HelloPojo: FileStatus{path=hdfs://localhost:8020/; isDirectory=true; modification_time=1390823919636; access_time=0; owner=root; group=supergroup; permission=rwxr-xr-x; isSymlink=false}
+[2014-02-02 17:40:41,135] boot - 11944  INFO [main] --- HelloPojo: FileStatus{path=hdfs://localhost:8020/app; isDirectory=true; modification_time=1391203430490; access_time=0; owner=jvalkealahti; group=supergroup; permission=rwxr-xr-x; isSymlink=false}
+----
 
 
 == Summary
 
-Congratulations! You've just developed a Spring application! 
-
-
-
-
-
-
+Congratulations! You've just developed a Spring YARN application! 
 
