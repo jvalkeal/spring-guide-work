@@ -14,7 +14,7 @@ public class ContainerApplication {
 	}
 
 	@Bean
-	public HelloPojo activatorPojo() {
+	public HelloPojo helloPojo() {
 		return new HelloPojo();
 	}
 

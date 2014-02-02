@@ -7,12 +7,20 @@ projects: [spring-hadoop]
 :spring_hadoop_version: 2.0.0.M4-hadoop22
 :java_version: 1.6
 :Component: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/stereotype/Component.html
-:Controller: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/stereotype/Controller.html
-:DispatcherServlet: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/web/servlet/DispatcherServlet.html
+:SpringComponentScanAnnotation: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/context/annotation/ComponentScan.html
+:SpringConfigurationAnnotation: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/context/annotation/Configuration.html
+:SpringBeanAnnotation: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/context/annotation/Bean.html
 :SpringApplication: http://docs.spring.io/spring-boot/docs/{spring_boot_version}/api/org/springframework/boot/SpringApplication.html
-:ResponseBody: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/web/bind/annotation/ResponseBody.html
+:ConfigurationProperties: http://docs.spring.io/spring-boot/docs/{spring_boot_version}/api/org/springframework/boot/context/properties/ConfigurationProperties.html
 :EnableAutoConfiguration: http://docs.spring.io/spring-boot/docs/{spring_boot_version}/api/org/springframework/boot/autoconfigure/EnableAutoConfiguration.html
 :YarnClient: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/yarn/client/YarnClient.html
+:YarnAppmaster: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/yarn/am/YarnAppmaster.html
+:YarnContainer: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/yarn/container/YarnContainer.html
+:YarnContainerAnnotation: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/yarn/annotation/YarnContainer.html
+:OnYarnContainerStartAnnotation: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/yarn/annotation/OnYarnContainerStart.html
+:SpringYarnBootApplication: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/yarn/boot/app/SpringYarnBootApplication.html
+:DefaultYarnContainer: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/yarn/container/DefaultYarnContainer.html
+:FsShell: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/data/hadoop/fs/FsShell.html
 :toc:
 :icons: font
 :source-highlighter: prettify
@@ -35,6 +43,30 @@ You'll build a simple Hadoop YARN application with Spring Hadoop and Spring Boot
 
 include::https://raw.github.com/spring-guides/getting-started-macros/master/how_to_complete_this_guide.adoc[]
 
+== Hadoop YARN Intro
+
+If you have been following the Hadoop community over the past year or two, you’ve probably seen a lot of discussions around YARN and the next version of Hadoop's MapReduce called MapReduce v2. YARN (Yet Another Resource Negotiator) is a component of the MapReduce project created to overcome some performance issues in Hadoop's original design. The fundamental idea of MapReduce v2 is to split the functionalities of the JobTracker, Resource Management and Job Scheduling/Monitoring, into separate daemons. The idea is to have a global Resource Manager (RM) and a per-application Application Master (AM). A generic diagram for YARN component dependencies can be found from YARN architecture.
+
+MapReduce Version 2 is an application running on top of YARN. It is also possible to make similar custom YARN based application which have nothing to do with MapReduce, it is simply running YARN application. However, writing a custom YARN based application is difficult. The YARN APIs are low-level infrastructure APIs, not high-level developer APIs.
+
+== Spring YARN Intro
+
+Application lifecycle from a moment when a developer starts his or her work to a point when someone actually executes an application on a Hadoop cluster is a bit more complicated than just creating a few lines of code. Lets see what needs to be considered:
+
+ - What is a project structure for an application code
+ - How project is build and packaged
+ - How packaged application is configured
+ - How application is executed
+
+We believe that Spring YARN and Spring Boot creates a very clear story how above topics can be handled. 
+
+At a high level, Spring YARN provides three different components, {YarnClient}[`YarnClient`], {YarnAppmaster}[`YarnAppmaster`] and {YarnContainer}[`YarnContainer`] which together can be called a Spring YARN Application. We provide default implementations for all components while still giving the end user an option to customize as much as he or she wants.
+
+In a Hadoop world it has always been a cumbersome process to get your own code packaged and executed on a Hadoop cluster. Should you just put your compiled package in Hadoop's classpath or let Hadoop's tools to copy your stuff into Hadoop during a job submission. What about if your own code depends on something which is not already present on Hadoop's default classpath libraries, even worse what about if dependencies in your code collides with libraries already in Hadoop's default classpath.
+
+With Spring Boot you can work around all these issues. You either create an executable jar(sometimes called as uber or fat jar) which bundles all dependencies or a zip package which can be exploded before code is about to be executed. In a latter case it's possible to re-use entries already available in Hadoop's default classpath.
+
+In this guide we are going to show how these 3 components, {YarnClient}[`YarnClient`], {YarnAppmaster}[`YarnAppmaster`] and {YarnContainer}[`YarnContainer`] are packaged into executable jars using Spring Boot. Internally Spring Boot rely heavy on application auto-configuration and Spring YARN adds its own auto-configuration magic. User can then concentrate on his or her own code and application configuration instead of spending a lot of time trying to understand how all the components should integrate with each others.
 
 [[scratch]]
 == Set up the project
@@ -65,20 +97,10 @@ include::initial/build.gradle[]
 
 include::https://raw.github.com/spring-guides/getting-started-macros/master/bootstrap_starter_pom_disclaimer.adoc[]
 
-== Hadoop YARN Intro
-
-If you have been following the Hadoop community over the past year or two, you’ve probably seen a lot of discussions around YARN and the next version of Hadoop's MapReduce called MapReduce v2. YARN (Yet Another Resource Negotiator) is a component of the MapReduce project created to overcome some performance issues in Hadoop's original design. The fundamental idea of MapReduce v2 is to split the functionalities of the JobTracker, Resource Management and Job Scheduling/Monitoring, into separate daemons. The idea is to have a global Resource Manager (RM) and a per-application Application Master (AM). A generic diagram for YARN component dependencies can be found from YARN architecture.
-
-MapReduce Version 2 is an application running on top of YARN. It is also possible to make similar custom YARN based application which have nothing to do with MapReduce, it is simply running YARN application. However, writing a custom YARN based application is difficult. The YARN APIs are low-level infrastructure APIs, not high-level developer APIs.
-
-== Spring YARN Intro
-
-At a high level, Spring YARN provides three different components, {YarnClient}[`YarnClient`], YarnAppmaster and YarnContainer which together can be called a Spring YARN Application. We provide default implementations for all components while still giving the end user an option to customize as much as he or she wants.
-
 [[initial]]
 == Create a Yarn Client
 
-Create a new Yarn Client for your Spring application:
+Here you create a `ClientApplication` class.
 
 `src/main/java/hello/client/ClientApplication.java`
 [source,java]
@@ -86,9 +108,14 @@ Create a new Yarn Client for your Spring application:
 include::complete/src/main/java/hello/client/ClientApplication.java[]
 ----
 
+ - {EnableAutoConfiguration}[`@EnableAutoConfiguration`] tells Spring Boot to start adding beans based on classpath setting, other beans, and various property settings.
+ - Specific auto-configuration for Spring YARN components takes place in a same way than from a core Spring Boot.
+
+The `main()` method uses Spring Boot's `SpringApplication.run()` method to launch an application. From there we simply request a bean of type {YarnClient}[`YarnClient`] and execute its `submitApplication()` method. What happens next depends on application configuration, which we go through later in this guide. Did you notice that there wasn't a single line of XML?
+
 == Create a Yarn Appmaster
 
-Create a new Yarn Appmaster for your Spring application:
+Here you create an `AppmasterApplication` class.
 
 `src/main/java/hello/appmaster/AppmasterApplication.java`
 [source,java]
@@ -96,9 +123,15 @@ Create a new Yarn Appmaster for your Spring application:
 include::complete/src/main/java/hello/appmaster/AppmasterApplication.java[]
 ----
 
+Application class for {YarnAppmaster}[`YarnAppmaster`] looks even simpler than what we just did for `ClientApplication`. Again the `main()` method uses Spring Boot's `SpringApplication.run()` method to launch an application.
+
+One might argue that if you use this type of dummy class to basically fire up your application, could we just use a generic class for this? Well simple answer is yes, we even have a generic {SpringYarnBootApplication}[`SpringYarnBootApplication`] class just for this purpose. You'd define that to be your main class for an executable jar and you'd accomplish this during the gradle build.
+
+In real life, however, you most likely need to start adding more custom functionality to your application component and you'd do that by start adding more beans. To do that you need to define a Spring {SpringConfigurationAnnotation}[`@Configuration`] or {SpringComponentScanAnnotation}[`@ComponentScan`]. `AppmasterApplication` would then act as your main starting point to define more custom functionality. Effectively this is exactly what we do with a {YarnContainer}[`YarnContainer`] in section below.
+
 == Create a Yarn Container
 
-Create a new Yarn Container for your Spring application:
+Here you create `ContainerApplication` and `HelloPojo` classes.
 
 `src/main/java/hello/container/ContainerApplication.java`
 [source,java]
@@ -106,11 +139,27 @@ Create a new Yarn Container for your Spring application:
 include::complete/src/main/java/hello/container/ContainerApplication.java[]
 ----
 
+In above `ContainerApplication`, notice how we added {SpringConfigurationAnnotation}[`@Configuration`] in a class level itself and {SpringBeanAnnotation}[`@Bean`] for a `helloPojo()` method. We jumped a little ahead what you most likely expected us to do. We previously mentioned {YarnContainer}[`YarnContainer`] component which is an interface towards what you'd execute in your containers. You could define your custom {YarnContainer}[`YarnContainer`] to implement this interface and wrap all logic inside of that implementation.
+
+However, Spring YARN defaults to a {DefaultYarnContainer}[`DefaultYarnContainer`] if none is defined and this default implementation expects to find a specific bean type from a `Spring Application Context` having the real user facing logic what container is supposed to do.
+
 `src/main/java/hello/container/HelloPojo.java`
 [source,java]
 ----
 include::complete/src/main/java/hello/container/HelloPojo.java[]
 ----
+
+`HelloPojo` class is a simple `POJO` in a sense that it doesn't extend any Spring YARN base classes. What we did in this class:
+
+ - We've added a class level {YarnContainerAnnotation}[`@YarnContainer`] annotation.
+ - We've added a method level {OnYarnContainerStartAnnotation}[`@OnYarnContainerStart`] annotation
+ - We've `@Autowired` a Hadoop's `Configuration` class
+
+{YarnContainerAnnotation}[`@YarnContainer`] is a stereotype annotation itself having a Spring's {Component}[`@Component`] defined in it. This is automatically marking a class to be a candidate having a {YarnContainerAnnotation}[`@YarnContainer`] functionality.
+
+Within this class we can use {OnYarnContainerStartAnnotation}[`@OnYarnContainerStart`] annotation to mark a public method having no return type or arguments act as something what needs to be executed on Hadoop.
+
+To demonstrate that we actually have some real functionality in this class, we simply use Spring Hadoop's {FsShell}[`@FsShell`] to list entries from a root of a `HDFS` file system. We needed to have Hadoop's `Configuration` which is prepared for you so that you can just autowire it.
 
 == Create an Application Configuration
 
@@ -122,15 +171,22 @@ Create a new yaml configuration file.
 include::complete/src/main/resources/application.yml[]
 ----
 
+Final part for your application is its runtime configuration which glues all the components together which then can be called as a Spring YARN application. This configuration act as source for Spring Boot's {ConfigurationProperties}[`@ConfigurationProperties`] and contains relevant configuration properties which cannot be auto-discovered or otherwise needs to have an option to be overwritten by an end user.
 
-== Test the application
+You can then write your own defaults for your own environment. Because these {ConfigurationProperties}[`@ConfigurationProperties`] are resolved at runtime by Spring Boot, you even have an easy option to overwrite these properties either by using command-line options or provide additional configuration property files.
 
-Now that the application is running, you can test it.
+== Run the application
+
+Now that the you've successfully compiled and packaged your application, it's time to do the fun part and execute it on Hadoop YARN.
 
 
 == Summary
 
 Congratulations! You've just developed a Spring application! 
+
+
+
+
 
 
 
