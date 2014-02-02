@@ -96,6 +96,8 @@ Below is the https://github.com/spring-guides/{project_id}/blob/master/initial/b
 include::initial/build.gradle[]
 ----
 
+In above gradle build file we simply create three different jars, each having classes for its specific role. These jars are then repackaged by Spring Boot's gradle plugin to create an executable jars.
+
 [[initial]]
 == Create a Yarn Client
 

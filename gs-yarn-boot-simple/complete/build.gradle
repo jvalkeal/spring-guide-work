@@ -33,11 +33,11 @@ task clientJar(type: Jar) {
 }
 
 task appmasterJar(type: Jar) {
-	appendix = 'appmaster'
-	baseName = 'gs-yarn-boot-simple'
-	from sourceSets.main.output
-	exclude('**/client/*')
-	exclude('**/container/*')
+    appendix = 'appmaster'
+    baseName = 'gs-yarn-boot-simple'
+    from sourceSets.main.output
+    exclude('**/client/*')
+    exclude('**/container/*')
 }
 
 task containerJar(type: Jar) {
@@ -49,7 +49,7 @@ task containerJar(type: Jar) {
 }
 
 task clientBoot(type: BootRepackage, dependsOn: clientJar) {
-	withJarTask = clientJar
+    withJarTask = clientJar
 }
 
 task appmasterBoot(type: BootRepackage, dependsOn: appmasterJar) {
@@ -57,7 +57,7 @@ task appmasterBoot(type: BootRepackage, dependsOn: appmasterJar) {
 }
 
 task containerBoot(type: BootRepackage, dependsOn: containerJar) {
-	withJarTask = containerJar
+    withJarTask = containerJar
 }
 
 jar.enabled = false
@@ -69,5 +69,5 @@ bootJars.dependsOn = [clientBoot,containerBoot,appmasterBoot]
 build.dependsOn(bootJars)
 
 task wrapper(type: Wrapper) {
-	gradleVersion = '1.8'
+    gradleVersion = '1.8'
 }
