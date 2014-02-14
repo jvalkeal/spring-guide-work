@@ -1,0 +1,148 @@
+---
+tags: [gradle]
+projects: [spring-hadoop]
+---
+:spring_boot_version: 1.0.0.RC1
+:jdk: http://www.oracle.com/technetwork/java/javase/downloads/index.html
+:toc:
+:icons: font
+:source-highlighter: prettify
+:project_id: gs-gradle-yarn
+This guide walks you through using Gradle to build a simple Spring YARN project.
+
+== What you'll build
+
+You'll create a simple app and then build it using Gradle.
+
+
+== What you'll need
+
+ - About 15 minutes
+ - A favorite text editor or IDE
+ - {jdk}[JDK 6] or later
+
+
+include::https://raw.github.com/spring-guides/getting-started-macros/master/how_to_complete_this_guide.adoc[]
+
+If you're not familiar with gradle, refer to link:/guides/gs/gradle[Building Java Projects with Gradle].
+
+[[scratch]]
+== Set up the project
+
+First you set up a Java project for Gradle to build. To keep the focus on Gradle, make the project as simple as possible for now.
+
+=== Create the directory structure
+
+In a project directory of your choosing, create the following subdirectory structure; for example, with `mkdir -p src/main/java/hello` on *nix systems:
+
+    └── src
+        └── main
+            ├── resources
+            └── java
+                └── hello
+                    ├── client
+                    ├── appmaster
+                    └── container
+
+
+`src/main/java/hello/container/ContainerApplication.java`
+[source,java]
+----
+include::complete/src/main/java/hello/container/ContainerApplication.java[]
+----
+
+`src/main/java/hello/appmaster/AppmasterApplication.java`
+[source,java]
+----
+include::complete/src/main/java/hello/appmaster/AppmasterApplication.java[]
+----
+
+`src/main/java/hello/client/ClientApplication.java`
+[source,java]
+----
+include::complete/src/main/java/hello/client/ClientApplication.java[]
+----
+
+`src/main/resources/application.yml`
+[source,yaml]
+----
+include::complete/src/main/resources/application.yml[]
+----
+
+[[initial]]
+== Understanding Gradle Usage with Spring YARN
+
+Here you create a `gradle.build` file.
+
+[source,groovy]
+----
+include::complete/build.gradle[tags=snippetA]
+----
+
+We're about to use Spring Boot Gradle plugin so `repository` and `dependency` needs to be defined within `buildscript` section.
+
+[source,groovy]
+----
+include::complete/build.gradle[tags=snippetB]
+----
+
+We defind project version to be `0.1.0` and apply plugins for `eclipse`, `idea` and `spring-boot`.
+
+[source,groovy]
+----
+include::complete/build.gradle[tags=snippetC]
+----
+
+We add dependency to Spring Hadoop.
+
+[source,groovy]
+----
+include::complete/build.gradle[tags=snippetD]
+----
+
+We use a custom `Jar` and `BootRepackage` tasks to build a client jar.
+
+[source,groovy]
+----
+include::complete/build.gradle[tags=snippetE]
+----
+
+We create additional jars for container and appmaster.
+
+[source,groovy]
+----
+include::complete/build.gradle[tags=snippetF]
+----
+
+Disabling main jar and bootRepackages tasks and hook other to build process.
+
+[source,groovy]
+----
+include::complete/build.gradle[tags=snippetG]
+----
+
+== Declare dependencies
+
+
+
+== Build Application Packages
+
+Run build.
+
+[source,text]
+----
+./gradlew clean build
+----
+
+You should see three jar files created.
+
+[source,text]
+----
+build/libs/gs-yarn-gradle-client-0.1.0.jar
+build/libs/gs-yarn-gradle-container-0.1.0.jar
+build/libs/gs-yarn-gradle-appmaster-0.1.0.jar
+----
+
+== Summary
+
+Congratulations! You have now created a simple yet effective Gradle build file for building Spring YARN projects.

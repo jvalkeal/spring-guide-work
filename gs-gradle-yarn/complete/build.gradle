@@ -1,0 +1,86 @@
+// tag::snippetA[]
+buildscript {
+    repositories {
+        maven { url "http://repo.spring.io/libs-milestone" }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.0.0.RC1")
+    }
+}
+// end::snippetA[]
+
+// tag::snippetB[]
+version =  '0.1.0'
+
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'spring-boot'
+// end::snippetB[]
+
+// tag::snippetC[]
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url "http://repo.spring.io/libs-milestone" }
+}
+// end::snippetC[]
+
+// tag::snippetD[]
+dependencies {
+    compile("org.springframework.data:spring-yarn-boot:2.0.0.BUILD-SNAPSHOT-hadoop22")
+}
+// end::snippetD[]
+
+// tag::snippetE[]
+task clientJar(type: Jar) {
+    appendix = 'client'
+    baseName = 'gs-yarn-gradle'
+    from sourceSets.main.output
+    exclude('**/appmaster/*')
+    exclude('**/container/*')
+}
+
+task clientBoot(type: BootRepackage, dependsOn: clientJar) {
+	withJarTask = clientJar
+}
+// end::snippetE[]
+
+// tag::snippetF[]
+task appmasterJar(type: Jar) {
+    appendix = 'appmaster'
+    baseName = 'gs-yarn-gradle'
+    from sourceSets.main.output
+    exclude('**/client/*')
+    exclude('**/container/*')
+}
+
+task containerJar(type: Jar) {
+    appendix = 'container'
+    baseName = 'gs-yarn-gradle'
+    from sourceSets.main.output
+    exclude('**/appmaster/*')
+    exclude('**/client/*')
+}
+
+task appmasterBoot(type: BootRepackage, dependsOn: appmasterJar) {
+    withJarTask = appmasterJar
+}
+
+task containerBoot(type: BootRepackage, dependsOn: containerJar) {
+    withJarTask = containerJar
+}
+// end::snippetF[]
+
+// tag::snippetG[]
+jar.enabled = false
+bootRepackage.enabled = false
+
+task bootJars
+bootJars.dependsOn = [clientBoot,containerBoot,appmasterBoot]
+
+build.dependsOn(bootJars)
+// end::snippetG[]
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.11'
+}

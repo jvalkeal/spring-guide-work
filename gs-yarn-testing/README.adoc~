@@ -1,0 +1,82 @@
+---
+tags: [gradle]
+projects: [spring-hadoop]
+---
+:spring_boot_version: 1.0.0.RC1
+:jdk: http://www.oracle.com/technetwork/java/javase/downloads/index.html
+:toc:
+:icons: font
+:source-highlighter: prettify
+:project_id: gs-gradle-yarn
+This guide walks you through to test a simple Spring YARN project.
+
+== What you'll build
+
+You'll create a simple app and then build it using Gradle.
+
+
+== What you'll need
+
+ - About 15 minutes
+ - A favorite text editor or IDE
+ - {jdk}[JDK 6] or later
+
+
+include::https://raw.github.com/spring-guides/getting-started-macros/master/how_to_complete_this_guide.adoc[]
+
+If you're not familiar with gradle, refer to link:/guides/gs/gradle[Building Java Projects with Gradle].
+
+[[scratch]]
+== Set up the project
+
+First you set up a Java project for Gradle to build. To keep the focus on Gradle, make the project as simple as possible for now.
+
+=== Create the directory structure
+
+In a project directory of your choosing, create the following subdirectory structure; for example, with `mkdir -p src/main/java/hello` on *nix systems:
+
+    └── src
+        └── main
+            ├── resources
+            └── java
+                └── hello
+                    ├── client
+                    ├── appmaster
+                    └── container
+
+
+`src/main/java/hello/container/ContainerApplication.java`
+[source,java]
+----
+include::complete/src/main/java/hello/container/ContainerApplication.java[]
+----
+
+`src/main/java/hello/appmaster/AppmasterApplication.java`
+[source,java]
+----
+include::complete/src/main/java/hello/appmaster/AppmasterApplication.java[]
+----
+
+`src/main/java/hello/client/ClientApplication.java`
+[source,java]
+----
+include::complete/src/main/java/hello/client/ClientApplication.java[]
+----
+
+
+[[initial]]
+== Understanding Gradle Usage with Spring YARN
+
+xxxx
+
+== Declare dependencies
+
+xxxx
+
+== Build Application Packages
+
+xxxx
+
+== Summary
+
+Congratulations! You have now created a simple yet effective Gradle build file for building Spring YARN projects.

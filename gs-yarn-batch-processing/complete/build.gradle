@@ -1,0 +1,85 @@
+buildscript {
+    repositories {
+        maven { url "http://repo.spring.io/libs-milestone" }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.0.0.RC1")
+    }
+}
+
+version =  '0.1.0'
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'spring-boot'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url "http://repo.spring.io/libs-milestone" }
+}
+
+dependencies {
+    compile("org.springframework.data:spring-yarn-batch:2.0.0.BUILD-SNAPSHOT-hadoop22")
+    compile("org.springframework.data:spring-yarn-boot:2.0.0.BUILD-SNAPSHOT-hadoop22")
+	runtime("org.springframework.boot:spring-boot-starter-batch:1.0.0.RC1")
+	testCompile("org.springframework.data:spring-yarn-boot-test:2.0.0.BUILD-SNAPSHOT-hadoop22")
+	testCompile("org.hamcrest:hamcrest-core:1.2.1")
+	testCompile("org.hamcrest:hamcrest-library:1.2.1")
+}
+
+configurations {
+	compile.exclude group: "org.slf4j", module: "slf4j-log4j12"
+	runtime.exclude group: "org.slf4j", module: "slf4j-log4j12"
+}
+
+task clientJar(type: Jar) {
+    appendix = 'client'
+    baseName = 'gs-yarn-batch-processing'
+    from sourceSets.main.output
+    exclude('**/appmaster/*')
+    exclude('**/container/*')
+}
+
+task appmasterJar(type: Jar) {
+    appendix = 'appmaster'
+    baseName = 'gs-yarn-batch-processing'
+    from sourceSets.main.output
+    exclude('**/client/*')
+    exclude('**/container/*')
+}
+
+task containerJar(type: Jar) {
+    appendix = 'container'
+    baseName = 'gs-yarn-batch-processing'
+    from sourceSets.main.output
+    exclude('**/appmaster/*')
+    exclude('**/client/*')
+}
+
+task clientBoot(type: BootRepackage, dependsOn: clientJar) {
+    withJarTask = clientJar
+}
+
+task appmasterBoot(type: BootRepackage, dependsOn: appmasterJar) {
+    withJarTask = appmasterJar
+}
+
+task containerBoot(type: BootRepackage, dependsOn: containerJar) {
+    withJarTask = containerJar
+}
+
+jar.enabled = false
+bootRepackage.enabled = false
+
+task bootJars
+bootJars.dependsOn = [clientBoot,containerBoot,appmasterBoot]
+
+build.dependsOn(bootJars)
+
+clean.doLast {ant.delete(dir: "target")}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.8'
+}

@@ -1,0 +1,34 @@
+---
+tags: [hadoop,yarn,xd]
+projects: [spring-hadoop]
+---
+:spring_version: 4.0.0.RELEASE
+:spring_boot_version: 1.0.0.RC1
+:spring_hadoop_version: 2.0.0.M4-hadoop22
+:java_version: 1.6
+:Component: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/stereotype/Component.html
+:SpringComponentScanAnnotation: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/context/annotation/ComponentScan.html
+:SpringConfigurationAnnotation: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/context/annotation/Configuration.html
+:SpringBeanAnnotation: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/context/annotation/Bean.html
+:SpringApplication: http://docs.spring.io/spring-boot/docs/{spring_boot_version}/api/org/springframework/boot/SpringApplication.html
+:ConfigurationProperties: http://docs.spring.io/spring-boot/docs/{spring_boot_version}/api/org/springframework/boot/context/properties/ConfigurationProperties.html
+:EnableAutoConfiguration: http://docs.spring.io/spring-boot/docs/{spring_boot_version}/api/org/springframework/boot/autoconfigure/EnableAutoConfiguration.html
+:YarnClient: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/yarn/client/YarnClient.html
+:YarnAppmaster: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/yarn/am/YarnAppmaster.html
+:YarnContainer: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/yarn/container/YarnContainer.html
+:YarnContainerAnnotation: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/yarn/annotation/YarnContainer.html
+:OnYarnContainerStartAnnotation: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/yarn/annotation/OnYarnContainerStart.html
+:SpringYarnBootApplication: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/yarn/boot/app/SpringYarnBootApplication.html
+:DefaultYarnContainer: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/yarn/container/DefaultYarnContainer.html
+:FsShell: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/data/hadoop/fs/FsShell.html
+:toc:
+:icons: font
+:source-highlighter: prettify
+:project_id: gs-yarn-boot-simple
+This guide walks you through the process of creating a Spring Hadoop YARN application.
+
+== What you'll build
+
+You'll build a simple Hadoop YARN application with Spring Hadoop and Spring Boot.
+
+
