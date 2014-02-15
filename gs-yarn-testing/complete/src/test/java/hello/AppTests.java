@@ -21,21 +21,17 @@ import org.springframework.yarn.test.context.YarnDelegatingSmartContextLoader;
 import org.springframework.yarn.test.junit.ApplicationInfo;
 import org.springframework.yarn.test.support.ContainerLogUtils;
 
-@ContextConfiguration(loader = YarnDelegatingSmartContextLoader.class, classes = EmptyConfig.class)
 @MiniYarnCluster
+@ContextConfiguration(loader = YarnDelegatingSmartContextLoader.class, classes = EmptyConfig.class)
 public class AppTests extends AbstractBootYarnClusterTests {
 
 	@Test
-	public void testAppSubmission() throws Exception {
-
-		String[] args = new String[] {
-				"--spring.yarn.client.files[0]=file:build/libs/gs-yarn-testing-appmaster-0.1.0.jar",
-				"--spring.yarn.client.files[1]=file:build/libs/gs-yarn-testing-container-0.1.0.jar" };
-
-		ApplicationInfo info = submitApplicationAndWait(ClientApplication.class, args);
+	public void testApp() throws Exception {
+		ApplicationInfo info = submitApplicationAndWait(ClientApplication.class, new String[0]);
 		assertThat(info.getYarnApplicationState(), is(YarnApplicationState.FINISHED));
 
-		List<Resource> resources = ContainerLogUtils.queryContainerLogs(getYarnCluster(), info.getApplicationId());
+		List<Resource> resources = ContainerLogUtils.queryContainerLogs(
+				getYarnCluster(), info.getApplicationId());
 		assertThat(resources, notNullValue());
 		assertThat(resources.size(), is(4));
 
@@ -48,7 +44,7 @@ public class AppTests extends AbstractBootYarnClusterTests {
 					assertThat(content, containsString("Hello from HelloPojo"));
 				}
 			} else if (file.getName().endsWith("stderr")) {
-				assertThat("stderr file is not empty: " + content, file.length(), is(0l));
+				assertThat("stderr with content: " + content, file.length(), is(0l));
 			}
 		}
 	}

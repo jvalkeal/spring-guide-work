@@ -12,7 +12,7 @@ This guide walks you through to test a simple Spring YARN project.
 
 == What you'll build
 
-You'll create a simple app and then build it using Gradle.
+You'll use an existing sample application and create a simple JUnit test to verify application is executed properly.
 
 
 == What you'll need
@@ -20,7 +20,9 @@ You'll create a simple app and then build it using Gradle.
  - About 15 minutes
  - A favorite text editor or IDE
  - {jdk}[JDK 6] or later
+ - You can also import the code from this guide as well as view the web page directly into link:/guides/gs/sts[Spring Tool Suite (STS)] and work your way through it from there.
 
+NOTE: Testing this sample application you don't need to have an existing or running Hadoop cluster.
 
 include::https://raw.github.com/spring-guides/getting-started-macros/master/how_to_complete_this_guide.adoc[]
 
@@ -29,13 +31,16 @@ If you're not familiar with gradle, refer to link:/guides/gs/gradle[Building Jav
 [[scratch]]
 == Set up the project
 
-First you set up a Java project for Gradle to build. To keep the focus on Gradle, make the project as simple as possible for now.
+Focus on this guide is to use `JUnit` to test your sample application. We have already prepared a project for gradle and application files based on sample link:/guides/gs/yarn-basic[YARN Basic Sample]. What is left for you is to create a `JUnit` test class.
 
 === Create the directory structure
 
-In a project directory of your choosing, create the following subdirectory structure; for example, with `mkdir -p src/main/java/hello` on *nix systems:
+In a project directory of your choosing, create the following subdirectory structure; for example, with `mkdir -p src/test/java/hello` on *nix systems:
 
     └── src
+        ├── test
+        │   └── java
+        │       └── hello
         └── main
             ├── resources
             └── java
@@ -45,37 +50,63 @@ In a project directory of your choosing, create the following subdirectory struc
                     └── container
 
 
-`src/main/java/hello/container/ContainerApplication.java`
-[source,java]
-----
-include::complete/src/main/java/hello/container/ContainerApplication.java[]
-----
-
-`src/main/java/hello/appmaster/AppmasterApplication.java`
-[source,java]
-----
-include::complete/src/main/java/hello/appmaster/AppmasterApplication.java[]
-----
-
-`src/main/java/hello/client/ClientApplication.java`
-[source,java]
-----
-include::complete/src/main/java/hello/client/ClientApplication.java[]
-----
 
 
 [[initial]]
-== Understanding Gradle Usage with Spring YARN
+== Create a JUnit Test Class
 
-xxxx
+`src/test/java/hello/AppTests.java`
+[source,java]
+----
+include::complete/src/test/java/hello/AppTests.java[]
+----
 
-== Declare dependencies
+Let's go through step by step what's happening in this `JUnit` class. As already mentioned earlier we don't need any existing or running Hadoop instances, instead testing framework from Spring YARN provides an easy way to fire up a mini cluster where your tests can be run in an isolated environment. 
 
-xxxx
+ - `@ContextConfiguration` together with `YarnDelegatingSmartContextLoader` tells Spring to prepare a testing context for a mini cluster. `EmptyConfig` is a simple helper class to use if there are no additional configuration for tests.
+ - `@MiniYarnCluster` tells Spring to start a Hadoop's mini cluster having components for `HDFS` and `YARN`. Hadoop's configuration from this minicluster is automatically injected into your testing context.
+ - `AbstractBootYarnClusterTests` is a class containing a lot of base functionality what you need in your tests.
 
-== Build Application Packages
+Then it's time to deploy the application into a running minicluster
 
-xxxx
+ - `submitApplicationAndWait()` method simply runs your `ClientApplication` and expects it to an application deployment. On default it will wait 60 seconds an application to finish and returns an current state.
+ - We make sure that we have a correct application state
+
+We use `ContainerLogUtils` to find our container logs files from a minicluster.
+
+ - We assert count of a log files
+ - We expect some specified content from log file
+ - We expect `stderr` files to be empty
+
+== Run Test
+
+[source,text]
+----
+./gradlew clean build
+----
+
+[source,text]
+----
+> Building 85% > :test > 1 test completed
+----
+
+[source,text]
+----
+$ find target/|grep std
+target/yarn--1502101888/yarn--1502101888-logDir-nm-0_0/application_1392395851515_0001/container_1392395851515_0001_01_000002/Container.stdout
+target/yarn--1502101888/yarn--1502101888-logDir-nm-0_0/application_1392395851515_0001/container_1392395851515_0001_01_000002/Container.stderr
+target/yarn--1502101888/yarn--1502101888-logDir-nm-0_0/application_1392395851515_0001/container_1392395851515_0001_01_000001/Appmaster.stdout
+target/yarn--1502101888/yarn--1502101888-logDir-nm-0_0/application_1392395851515_0001/container_1392395851515_0001_01_000001/Appmaster.stderr
+----
+
+[source,text]
+----
+$ grep Hello target/yarn--1502101888/yarn--1502101888-logDir-nm-0_0/application_1392395851515_0001/container_1392395851515_0001_01_000002/Container.stdout
+[2014-02-14 16:37:54.278] boot - 18453  INFO [main] --- HelloPojo: Hello from HelloPojo
+[2014-02-14 16:37:54.278] boot - 18453  INFO [main] --- HelloPojo: About to list from hdfs root content
+[2014-02-14 16:37:55.157] boot - 18453  INFO [main] --- HelloPojo: FileStatus{path=hdfs://localhost:33626/; isDirectory=true; modification_time=1392395854968; access_time=0; owner=jvalkealahti; group=supergroup; permission=rwxr-xr-x; isSymlink=false}
+[2014-02-14 16:37:55.157] boot - 18453  INFO [main] --- HelloPojo: FileStatus{path=hdfs://localhost:33626/app; isDirectory=true; modification_time=1392395854968; access_time=0; owner=jvalkealahti; group=supergroup; permission=rwxr-xr-x; isSymlink=false}
+----
 
 == Summary
 

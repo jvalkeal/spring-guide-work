@@ -378,22 +378,21 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] { cursor: default; }
 <li><a href="#_create_the_directory_structure">Create the directory structure</a></li>
 </ul>
 </li>
-<li><a href="#initial">Understanding Gradle Usage with Spring YARN</a></li>
-<li><a href="#_declare_dependencies">Declare dependencies</a></li>
-<li><a href="#_build_application_packages">Build Application Packages</a></li>
+<li><a href="#initial">Create a JUnit Test Class</a></li>
+<li><a href="#_run_test">Run Test</a></li>
 <li><a href="#_summary">Summary</a></li>
 </ul>
 </div>
 </div>
 <div id="content">
 <div class="paragraph">
-<p>This guide walks you through using Gradle to build a simple Spring YARN project.</p>
+<p>This guide walks you through to test a simple Spring YARN project.</p>
 </div>
 <div class="sect1">
 <h2 id="_what_you_ll_build">What you&#8217;ll build</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You&#8217;ll create a simple app and then build it using Gradle.</p>
+<p>You&#8217;ll use an existing sample application and create a simple JUnit test to verify application is executed properly.</p>
 </div>
 </div>
 </div>
@@ -411,7 +410,22 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] { cursor: default; }
 <li>
 <p><a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">JDK 6</a> or later</p>
 </li>
+<li>
+<p>You can also import the code from this guide as well as view the web page directly into <a href="/guides/gs/sts">Spring Tool Suite (STS)</a> and work your way through it from there.</p>
+</li>
 </ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-note" title="Note"></i>
+</td>
+<td class="content">
+Testing this sample application you don&#8217;t need to have an existing or running Hadoop cluster.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -437,7 +451,7 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] { cursor: default; }
 <p>cd into <code>gs-gradle-yarn/initial</code></p>
 </li>
 <li>
-<p>Jump ahead to <a href="#initial">Understanding Gradle Usage with Spring YARN</a>.</p>
+<p>Jump ahead to <a href="#initial">Create a JUnit Test Class</a>.</p>
 </li>
 </ul>
 </div>
@@ -453,16 +467,19 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] { cursor: default; }
 <h2 id="scratch">Set up the project</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>First you set up a Java project for Gradle to build. To keep the focus on Gradle, make the project as simple as possible for now.</p>
+<p>Focus on this guide is to use <code>JUnit</code> to test your sample application. We have already prepared a project for gradle and application files based on sample <a href="/guides/gs/yarn-basic">YARN Basic Sample</a>. What is left for you is to create a <code>JUnit</code> test class.</p>
 </div>
 <div class="sect2">
 <h3 id="_create_the_directory_structure">Create the directory structure</h3>
 <div class="paragraph">
-<p>In a project directory of your choosing, create the following subdirectory structure; for example, with <code>mkdir -p src/main/java/hello</code> on *nix systems:</p>
+<p>In a project directory of your choosing, create the following subdirectory structure; for example, with <code>mkdir -p src/test/java/hello</code> on *nix systems:</p>
 </div>
 <div class="literalblock">
 <div class="content">
 <pre>└── src
+    ├── test
+    │   └── java
+    │       └── hello
     └── main
         ├── resources
         └── java
@@ -472,101 +489,148 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] { cursor: default; }
                 └── container</pre>
 </div>
 </div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="initial">Create a JUnit Test Class</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p><code>src/main/java/hello/container/ContainerApplication.java</code></p>
+<p><code>src/test/java/hello/AppTests.java</code></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint java language-java"><code>package hello.container;
+<pre class="prettyprint java language-java"><code>package hello;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+import hello.client.ClientApplication;
 
-@Configuration
-@EnableAutoConfiguration
-public class ContainerApplication {
+import java.io.File;
+import java.util.List;
 
-	public static void main(String[] args) {
-		SpringApplication.run(ContainerApplication.class, args);
-	}
+import org.apache.hadoop.yarn.api.records.YarnApplicationState;
+import org.junit.Test;
+import org.springframework.core.io.Resource;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.yarn.boot.test.junit.AbstractBootYarnClusterTests;
+import org.springframework.yarn.boot.test.junit.AbstractBootYarnClusterTests.EmptyConfig;
+import org.springframework.yarn.test.context.MiniYarnCluster;
+import org.springframework.yarn.test.context.YarnDelegatingSmartContextLoader;
+import org.springframework.yarn.test.junit.ApplicationInfo;
+import org.springframework.yarn.test.support.ContainerLogUtils;
 
-	@Bean
-	public HelloPojo helloPojo() {
-		return new HelloPojo();
+@MiniYarnCluster
+@ContextConfiguration(loader = YarnDelegatingSmartContextLoader.class, classes = EmptyConfig.class)
+public class AppTests extends AbstractBootYarnClusterTests {
+
+	@Test
+	public void testApp() throws Exception {
+		ApplicationInfo info = submitApplicationAndWait(ClientApplication.class, new String[0]);
+		assertThat(info.getYarnApplicationState(), is(YarnApplicationState.FINISHED));
+
+		List&lt;Resource&gt; resources = ContainerLogUtils.queryContainerLogs(
+				getYarnCluster(), info.getApplicationId());
+		assertThat(resources, notNullValue());
+		assertThat(resources.size(), is(4));
+
+		for (Resource res : resources) {
+			File file = res.getFile();
+			String content = ContainerLogUtils.getFileContent(file);
+			if (file.getName().endsWith("stdout")) {
+				assertThat(file.length(), greaterThan(0l));
+				if (file.getName().equals("Container.stdout")) {
+					assertThat(content, containsString("Hello from HelloPojo"));
+				}
+			} else if (file.getName().endsWith("stderr")) {
+				assertThat("stderr with content: " + content, file.length(), is(0l));
+			}
+		}
 	}
 
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p><code>src/main/java/hello/appmaster/AppmasterApplication.java</code></p>
+<p>Let&#8217;s go through step by step what&#8217;s happening in this <code>JUnit</code> class. As already mentioned earlier we don&#8217;t need any existing or running Hadoop instances, instead testing framework from Spring YARN provides an easy way to fire up a mini cluster where your tests can be run in an isolated environment.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>@ContextConfiguration</code> together with <code>YarnDelegatingSmartContextLoader</code> tells Spring to prepare a testing context for a mini cluster. <code>EmptyConfig</code> is a simple helper class to use if there are no additional configuration for tests.</p>
+</li>
+<li>
+<p><code>@MiniYarnCluster</code> tells Spring to start a Hadoop&#8217;s mini cluster having components for <code>HDFS</code> and <code>YARN</code>. Hadoop&#8217;s configuration from this minicluster is automatically injected into your testing context.</p>
+</li>
+<li>
+<p><code>AbstractBootYarnClusterTests</code> is a class containing a lot of base functionality what you need in your tests.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Then it&#8217;s time to deploy the application into a running minicluster</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>submitApplicationAndWait()</code> method simply runs your <code>ClientApplication</code> and expects it to an application deployment. On default it will wait 60 seconds an application to finish and returns an current state.</p>
+</li>
+<li>
+<p>We make sure that we have a correct application state</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>We use <code>ContainerLogUtils</code> to find our container logs files from a minicluster.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>We assert count of a log files</p>
+</li>
+<li>
+<p>We expect some specified content from log file</p>
+</li>
+<li>
+<p>We expect <code>stderr</code> files to be empty</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_run_test">Run Test</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint text language-text"><code>./gradlew clean build</code></pre>
+</div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint java language-java"><code>package hello.appmaster;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-
-@EnableAutoConfiguration
-public class AppmasterApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(AppmasterApplication.class, args);
-	}
-
-}</code></pre>
+<pre class="prettyprint text language-text"><code>&gt; Building 85% &gt; :test &gt; 1 test completed</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p><code>src/main/java/hello/client/ClientApplication.java</code></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint java language-java"><code>package hello.client;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.yarn.client.YarnClient;
-
-@EnableAutoConfiguration
-public class ClientApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(ClientApplication.class, args)
-			.getBean(YarnClient.class)
-			.submitApplication();
-	}
-
-}</code></pre>
+<pre class="prettyprint text language-text"><code>$ find target/|grep std
+target/yarn--1502101888/yarn--1502101888-logDir-nm-0_0/application_1392395851515_0001/container_1392395851515_0001_01_000002/Container.stdout
+target/yarn--1502101888/yarn--1502101888-logDir-nm-0_0/application_1392395851515_0001/container_1392395851515_0001_01_000002/Container.stderr
+target/yarn--1502101888/yarn--1502101888-logDir-nm-0_0/application_1392395851515_0001/container_1392395851515_0001_01_000001/Appmaster.stdout
+target/yarn--1502101888/yarn--1502101888-logDir-nm-0_0/application_1392395851515_0001/container_1392395851515_0001_01_000001/Appmaster.stderr</code></pre>
 </div>
 </div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint text language-text"><code>$ grep Hello target/yarn--1502101888/yarn--1502101888-logDir-nm-0_0/application_1392395851515_0001/container_1392395851515_0001_01_000002/Container.stdout
+[2014-02-14 16:37:54.278] boot - 18453  INFO [main] --- HelloPojo: Hello from HelloPojo
+[2014-02-14 16:37:54.278] boot - 18453  INFO [main] --- HelloPojo: About to list from hdfs root content
+[2014-02-14 16:37:55.157] boot - 18453  INFO [main] --- HelloPojo: FileStatus{path=hdfs://localhost:33626/; isDirectory=true; modification_time=1392395854968; access_time=0; owner=jvalkealahti; group=supergroup; permission=rwxr-xr-x; isSymlink=false}
+[2014-02-14 16:37:55.157] boot - 18453  INFO [main] --- HelloPojo: FileStatus{path=hdfs://localhost:33626/app; isDirectory=true; modification_time=1392395854968; access_time=0; owner=jvalkealahti; group=supergroup; permission=rwxr-xr-x; isSymlink=false}</code></pre>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="initial">Understanding Gradle Usage with Spring YARN</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>xxxx</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_declare_dependencies">Declare dependencies</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>xxxx</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_build_application_packages">Build Application Packages</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>xxxx</p>
 </div>
 </div>
 </div>
@@ -581,7 +645,7 @@ public class ClientApplication {
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-02-14 11:50:13 GMT
+Last updated 2014-02-15 08:31:17 GMT
 </div>
 </div>
 </body>
