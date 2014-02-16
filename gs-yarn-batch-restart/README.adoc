@@ -1,0 +1,123 @@
+---
+tags: [hadoop,yarn,batch]
+projects: [spring-hadoop]
+---
+:spring_version: 4.0.0.RELEASE
+:spring_boot_version: 1.0.0.RC1
+:spring_hadoop_version: 2.0.0.M4-hadoop22
+:java_version: 1.6
+:Component: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/stereotype/Component.html
+:SpringComponentScanAnnotation: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/context/annotation/ComponentScan.html
+:SpringConfigurationAnnotation: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/context/annotation/Configuration.html
+:SpringBeanAnnotation: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/context/annotation/Bean.html
+:SpringApplication: http://docs.spring.io/spring-boot/docs/{spring_boot_version}/api/org/springframework/boot/SpringApplication.html
+:ConfigurationProperties: http://docs.spring.io/spring-boot/docs/{spring_boot_version}/api/org/springframework/boot/context/properties/ConfigurationProperties.html
+:EnableAutoConfiguration: http://docs.spring.io/spring-boot/docs/{spring_boot_version}/api/org/springframework/boot/autoconfigure/EnableAutoConfiguration.html
+:YarnClient: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/yarn/client/YarnClient.html
+:YarnAppmaster: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/yarn/am/YarnAppmaster.html
+:YarnContainer: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/yarn/container/YarnContainer.html
+:YarnContainerAnnotation: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/yarn/annotation/YarnContainer.html
+:OnYarnContainerStartAnnotation: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/yarn/annotation/OnYarnContainerStart.html
+:SpringYarnBootApplication: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/yarn/boot/app/SpringYarnBootApplication.html
+:DefaultYarnContainer: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/yarn/container/DefaultYarnContainer.html
+:FsShell: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/data/hadoop/fs/FsShell.html
+:toc:
+:icons: font
+:source-highlighter: prettify
+:project_id: gs-yarn-boot-simple
+This guide walks you through the process of executing a Spring Batch job on Hadoop YARN.
+
+== What you'll build
+
+You'll build a simple Hadoop YARN application with Spring Hadoop and Spring Boot.
+
+
+== What you'll need
+
+ - About 15 minutes
+ - A favorite text editor or IDE
+ - http://www.oracle.com/technetwork/java/javase/downloads/index.html[JDK {java_version}] or later
+ - http://www.gradle.org/downloads[Gradle 1.8+]
+ - Cluster or local single-node instance based on Hadoop 2.2.0 or later
+ - You can also import the code from this guide as well as view the web page directly into link:/guides/gs/sts[Spring Tool Suite (STS)] and work your way through it from there.
+
+include::https://raw.github.com/spring-guides/getting-started-macros/master/how_to_complete_this_guide.adoc[]
+
+[[scratch]]
+== Set up the project
+
+First you set up a basic build script. You can use any build system you like when building apps with Spring, but the code you need to work with http://gradle.org[Gradle] is included here. If you're not familiar with it, refer to link:/guides/gs/gradle[Building Java Projects with Gradle].
+
+=== Create the directory structure
+
+In a project directory of your choosing, create the following subdirectory structure; for example, with `mkdir -p src/main/java/hello` on *nix systems:
+
+    └── src
+        └── main
+            ├── resources
+            └── java
+                └── hello
+                    ├── client
+                    ├── appmaster
+                    └── container
+
+
+=== Create a Gradle build file
+Below is the https://github.com/spring-guides/{project_id}/blob/master/initial/build.gradle[initial Gradle build file]. If you are using link:/guides/gs/sts[Spring Tool Suite (STS)], you can import the guide directly.
+
+`build.gradle`
+[source,java]
+----
+include::complete/build.gradle[]
+----
+
+In above gradle build file we simply create three different jars, each having classes for its specific role. These jars are then repackaged by Spring Boot's gradle plugin to create an executable jars.
+
+[[initial]]
+== Create a Remote Batch Step
+
+`src/main/java/hello/container/PrintTasklet.java`
+[source,java]
+----
+include::complete/src/main/java/hello/container/PrintTasklet.java[]
+----
+
+Here you create a `ContainerApplication` class.
+
+`src/main/java/hello/container/ContainerApplication.java`
+[source,java]
+----
+include::complete/src/main/java/hello/container/ContainerApplication.java[]
+----
+
+
+== Create a Batch Job
+
+Here you create a `AppmasterApplication` class.
+
+`src/main/java/hello/appmaster/AppmasterApplication.java`
+[source,java]
+----
+include::complete/src/main/java/hello/appmaster/AppmasterApplication.java[]
+----
+
+== Create a Yarn Client
+
+Here you create a `ClientApplication` class.
+
+`src/main/java/hello/client/ClientApplication.java`
+[source,java]
+----
+include::complete/src/main/java/hello/client/ClientApplication.java[]
+----
+
+ - {EnableAutoConfiguration}[`@EnableAutoConfiguration`] tells Spring Boot to start adding beans based on classpath setting, other beans, and various property settings.
+ - Specific auto-configuration for Spring YARN components takes place in a same way than from a core Spring Boot.
+
+The `main()` method uses Spring Boot's `SpringApplication.run()` method to launch an application. From there we simply request a bean of type {YarnClient}[`YarnClient`] and execute its `submitApplication()` method. What happens next depends on application configuration, which we go through later in this guide. Did you notice that there wasn't a single line of XML?
+
+
+== Summary
+
+Congratulations! You've just developed a Spring YARN application! 
+
