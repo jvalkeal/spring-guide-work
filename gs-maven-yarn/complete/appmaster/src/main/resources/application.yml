@@ -1,15 +1,15 @@
 spring:
     yarn:
-        appName: gs-yarn-boot-simple
-        applicationDir: /app/gs-yarn-boot-simple/
+        appName: gs-yarn-maven
+        applicationDir: /app/gs-yarn-maven/
         fsUri: hdfs://localhost:8020
         rmAddress: localhost:8032
         schedulerAddress: localhost:8030
         client:
-            appmasterFile: gs-yarn-boot-simple-appmaster-0.1.0.jar
+            appmasterFile: gs-yarn-maven-appmaster-0.1.0.jar
             files:
-              - "file:build/libs/gs-yarn-boot-simple-container-0.1.0.jar"
-              - "file:build/libs/gs-yarn-boot-simple-appmaster-0.1.0.jar"
+              - "file:dist/target/gs-yarn-maven-dist-0.1.0-bin/gs-yarn-maven-container-0.1.0.jar"
+              - "file:dist/target/gs-yarn-maven-dist-0.1.0-bin/gs-yarn-maven-appmaster-0.1.0.jar"
         appmaster:
             containerCount: 1
-            containerFile: gs-yarn-boot-simple-container-0.1.0.jar
+            containerFile: gs-yarn-maven-container-0.1.0.jar
