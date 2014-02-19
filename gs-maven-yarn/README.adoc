@@ -1,34 +1,230 @@
 ---
-tags: [hadoop,yarn,xd]
+tags: [maven]
 projects: [spring-hadoop]
 ---
-:spring_version: 4.0.0.RELEASE
-:spring_boot_version: 1.0.0.RC1
-:spring_hadoop_version: 2.0.0.M4-hadoop22
-:java_version: 1.6
-:Component: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/stereotype/Component.html
-:SpringComponentScanAnnotation: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/context/annotation/ComponentScan.html
-:SpringConfigurationAnnotation: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/context/annotation/Configuration.html
-:SpringBeanAnnotation: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/context/annotation/Bean.html
-:SpringApplication: http://docs.spring.io/spring-boot/docs/{spring_boot_version}/api/org/springframework/boot/SpringApplication.html
-:ConfigurationProperties: http://docs.spring.io/spring-boot/docs/{spring_boot_version}/api/org/springframework/boot/context/properties/ConfigurationProperties.html
-:EnableAutoConfiguration: http://docs.spring.io/spring-boot/docs/{spring_boot_version}/api/org/springframework/boot/autoconfigure/EnableAutoConfiguration.html
-:YarnClient: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/yarn/client/YarnClient.html
-:YarnAppmaster: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/yarn/am/YarnAppmaster.html
-:YarnContainer: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/yarn/container/YarnContainer.html
-:YarnContainerAnnotation: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/yarn/annotation/YarnContainer.html
-:OnYarnContainerStartAnnotation: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/yarn/annotation/OnYarnContainerStart.html
-:SpringYarnBootApplication: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/yarn/boot/app/SpringYarnBootApplication.html
-:DefaultYarnContainer: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/yarn/container/DefaultYarnContainer.html
-:FsShell: http://docs.spring.io/spring-hadoop/docs/{spring_hadoop_version}/api/org/springframework/data/hadoop/fs/FsShell.html
+:spring_boot_version: 1.0.0.RC3
+:jdk: http://www.oracle.com/technetwork/java/javase/downloads/index.html
 :toc:
 :icons: font
 :source-highlighter: prettify
-:project_id: gs-yarn-boot-simple
-This guide walks you through the process of creating a Spring Hadoop YARN application.
+:project_id: gs-maven-yarn
+This guide walks you through using Maven to build a simple Spring YARN project.
 
 == What you'll build
 
-You'll build a simple Hadoop YARN application with Spring Hadoop and Spring Boot.
+You'll create a simple app and then build it using Maven.
+
+NOTE: In this guide we are not trying to create fully working YARN application, instead we focus on project and build model.
+
+== What you'll need
+
+ - About 15 minutes
+ - A favorite text editor or IDE
+ - {jdk}[JDK 6] or later
 
 
+include::https://raw.github.com/spring-guides/getting-started-macros/master/how_to_complete_this_guide.adoc[]
+
+If you're not familiar with gradle, refer to
+link:/guides/gs/maven[Building Java Projects with Maven].
+
+[[scratch]]
+== Set up the project
+
+First you set up a Java project for Gradle to build. To keep the focus on Gradle, make the project as simple as possible for now.
+
+=== Create the directory structure
+
+In a project directory of your choosing, create the following subdirectory structure; for example, with `mkdir -p src/main/java/hello` on *nix systems:
+
+    ├── appmaster
+    ├   └── src
+    ├       └── main
+    ├           ├── resources
+    ├           └── java
+    ├               └── hello
+    ├                   └── appmaster
+    ├── container
+    ├   └── src
+    ├       └── main
+    ├           ├── resources
+    ├           └── java
+    ├               └── hello
+    ├                   └── container
+    ├── client
+    ├   └── src
+    ├       └── main
+    ├           ├── resources
+    ├           └── java
+    ├               └── hello
+    ├                   └── client
+    └── dist
+
+
+Here you create a `ContainerApplication` class.
+
+`container/src/main/java/hello/container/ContainerApplication.java`
+[source,java]
+----
+include::complete/container/src/main/java/hello/container/ContainerApplication.java[]
+----
+
+Here you create an `AppmasterApplication` class.
+
+`appmaster/src/main/java/hello/appmaster/AppmasterApplication.java`
+[source,java]
+----
+include::complete/appmaster/src/main/java/hello/appmaster/AppmasterApplication.java[]
+----
+
+Here you create a `ClientApplication` class.
+
+`client/src/main/java/hello/client/ClientApplication.java`
+[source,java]
+----
+include::complete/client/src/main/java/hello/client/ClientApplication.java[]
+----
+
+Here you create a `application` yaml configuration file for all
+sub-projects.
+
+`container/src/main/resources/application.yml`
+[source,yaml]
+----
+include::complete/container/src/main/resources/application.yml[]
+----
+
+`appmaster/src/main/resources/application.yml`
+[source,yaml]
+----
+include::complete/appmaster/src/main/resources/application.yml[]
+----
+
+`client/src/main/resources/application.yml`
+[source,yaml]
+----
+include::complete/client/src/main/resources/application.yml[]
+----
+
+[[initial]]
+== Understanding Maven Usage with Spring YARN
+
+Here you create a main parent `pom.xml` file.
+
+`pom.xml`
+[source,xml]
+----
+include::complete/pom.xml[]
+----
+
+We created a project structure placing `appmaster`, `container` and
+`client` in its own sub-projects. Additionally we added a fourth
+project named `dist` which only purpose is to use `assembly` plugin
+to collect all artifacts together when project is build.
+
+Here you create an appmaster `pom.xml` file.
+
+`appmaster/pom.xml`
+[source,xml]
+----
+include::complete/appmaster/pom.xml[]
+----
+
+Here you create a container `pom.xml` file.
+
+`container/pom.xml`
+[source,xml]
+----
+include::complete/container/pom.xml[]
+----
+
+Here you create a client `pom.xml` file.
+
+`client/pom.xml`
+[source,xml]
+----
+include::complete/client/pom.xml[]
+----
+
+Here you create a distribution `pom.xml` file.
+
+`dist/pom.xml`
+[source,xml]
+----
+include::complete/dist/pom.xml[]
+----
+
+Here you create an assembly `assembly.xml` file.
+
+`dist/assembly.xml`
+[source,xml]
+----
+include::complete/dist/assembly.xml[]
+----
+
+== Declare dependencies
+
+Spring for Apache Hadoop provides a transitive dependencies via its
+own maven poms against different Hadoop distribution. This way you
+don't need to worry about which dependencies are actually needed if
+you are building against vanilla Hadoop, Hortonworks Data Platform or
+Cloudera Distribution for Hadoop. 
+
+[source,xml]
+.Vanilla Hadoop 2.2.X
+----
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.data</groupId>
+        <artifactId>spring-yarn-boot</artifactId>
+        <version>2.0.0.RC1</version>
+    </dependency>
+</dependencies>
+----
+
+[source,xml]
+.Hortonworks Data Platform 2.X
+----
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.data</groupId>
+        <artifactId>spring-yarn-boot</artifactId>
+        <version>2.0.0.RC1-hdp20</version>
+    </dependency>
+</dependencies>
+----
+
+[source,xml]
+.Cloudera Distrobution including Hadoop 5.X
+----
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.data</groupId>
+        <artifactId>spring-yarn-boot</artifactId>
+        <version>2.0.0.RC1-cdh5</version>
+    </dependency>
+</dependencies>
+----
+
+== Build Application Packages
+
+Run build.
+
+[source,text]
+----
+./mvn clean package
+----
+
+You should see three jar files created.
+
+[source,text]
+----
+dist/target/gs-yarn-maven-dist-0.1.0-bin/
+dist/target/gs-yarn-maven-dist-0.1.0-bin/gs-yarn-maven-container-0.1.0.jar
+dist/target/gs-yarn-maven-dist-0.1.0-bin/gs-yarn-maven-client-0.1.0.jar
+dist/target/gs-yarn-maven-dist-0.1.0-bin/gs-yarn-maven-appmaster-0.1.0.jar
+----
+
+== Summary
+
+Congratulations! You have now created a simple yet effective Maven build file for building Spring YARN projects.

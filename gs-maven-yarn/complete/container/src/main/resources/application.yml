@@ -2,6 +2,3 @@ spring:
     yarn:
         appName: gs-yarn-maven
         applicationDir: /app/gs-yarn-maven/
-        fsUri: hdfs://localhost:8020
-        rmAddress: localhost:8032
-        schedulerAddress: localhost:8030
