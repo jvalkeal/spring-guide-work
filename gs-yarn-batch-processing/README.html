@@ -379,6 +379,7 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] { cursor: default; }
 <li><a href="#_create_a_gradle_build_file">Create a Gradle build file</a></li>
 </ul>
 </li>
+<li><a href="#_spring_batch_intro">Spring Batch Intro</a></li>
 <li><a href="#initial">Create a Remote Batch Step</a></li>
 <li><a href="#_create_a_batch_job">Create a Batch Job</a></li>
 <li><a href="#_create_a_yarn_client">Create a Yarn Client</a></li>
@@ -394,7 +395,8 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] { cursor: default; }
 <h2 id="_what_you_ll_build">What you&#8217;ll build</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You&#8217;ll build a simple Hadoop YARN application with Spring Hadoop and Spring Boot.</p>
+<p>You&#8217;ll build a simple Hadoop YARN application with Spring Hadoop,
+Spring Batch and Spring Boot.</p>
 </div>
 </div>
 </div>
@@ -584,8 +586,85 @@ task wrapper(type: Wrapper) {
 </div>
 </div>
 <div class="sect1">
+<h2 id="_spring_batch_intro">Spring Batch Intro</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Many batch processing problems can be solved with single threaded,
+single process jobs, so it is always a good idea to properly check if
+that meets your needs before thinking about more complex
+implementations. When you are ready to start implementing a job with
+some parallel processing, Spring Batch offers a range of options. At a
+high level there are two modes of parallel processing: single process,
+multi-threaded; and multi-process.</p>
+</div>
+<div class="paragraph">
+<p>Spring Hadoop contains a support for running Spring Batch jobs on a
+Hadoop cluster. For better parallel processing Spring Batch
+partitioned steps can be executed on a Hadoop cluster as remote steps.</p>
+</div>
+<div class="paragraph">
+<p>Starting point running a Spring Batch Job is always the Application
+Master whether a job is just simple job with or without partitioning.
+In case partitioning is not used the whole job would be run within the
+Application Master and no Containers would be launched. This may seem
+a bit odd to run something on Hadoop without using Containers but one
+should remember that Application Master is also just a resource
+allocated from a Hadoop cluster.</p>
+</div>
+<div class="paragraph">
+<p>Order to run Spring Batch jobs on a Hadoop cluster, few constraints
+exists:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>Job Context</code> - Application Master is the main entry point of running
+the job.</p>
+</li>
+<li>
+<p><code>Job Repository</code> - Application Master needs to have access to a
+repository which is located either in-memory or in a database. These
+are the two type natively supported by Spring Batch.</p>
+</li>
+<li>
+<p><code>Remote Steps</code> - Due to nature how Spring Batch partitioning works,
+remote step needs an access to a job repository.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s take a quick look how Spring Batch partitioning is handled.
+Concept of running a partitioned job involves three things, Remote
+steps, Partition Handler and a Partitioner. If we do a little bit of
+oversimplification a remote step is like any other step from a user
+point of view. Spring Batch itself does not contain implementations
+for any proprietary grid or remoting fabrics. Spring Batch does
+however provide a useful implementation of PartitionHandler that
+executes Steps locally in separate threads of execution, using the
+TaskExecutor strategy from Spring. Spring Hadoop provides
+implementation to execute Steps remotely on a Hadoop cluster.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-note" title="Note"></i>
+</td>
+<td class="content">
+For more background information about the Spring Batch
+Partitioning, read the Spring Batch reference documentation.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="initial">Create a Remote Batch Step</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>Here you create a <code>PrintTasklet</code> class.</p>
+</div>
 <div class="paragraph">
 <p><code>src/main/java/hello/container/PrintTasklet.java</code></p>
 </div>
@@ -613,6 +692,17 @@ public class PrintTasklet implements Tasklet {
 
 }</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p><code>Tasklet</code> in Spring Batch is one of the easiest concepts to use when
+something needs to be executed in part of a job and step processing.
+This is serving a purpose of demonstrating how simple it is to execute
+a real `Partitioned Step`s on Hadoop YARN without introducing more
+complex job processing.</p>
+</div>
+<div class="paragraph">
+<p>In above <code>PrintTasklet</code> we simply write a log message when <code>Tasklet</code>
+itself is executed.</p>
 </div>
 <div class="paragraph">
 <p>Here you create a <code>ContainerApplication</code> class.</p>
@@ -661,6 +751,26 @@ public class ContainerApplication {
 
 }</code></pre>
 </div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>@EnableYarnRemoteBatchProcessing</code> tells Spring to enable Batch
+processing on YARN Containers. Batch <code>@EnableBatchProcessing</code> is
+automatically included meaning all builders for JavaConfig are
+available.</p>
+</li>
+<li>
+<p>We <code>@AutoWired</code> step builder which is then used to create steps as
+beans.</p>
+</li>
+<li>
+<p>We defined <code>PrintTasklet</code> as <code>@Bean</code></p>
+</li>
+<li>
+<p>We created a step as <code>@Bean</code> and instructed it to execute a tasklet.</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -747,6 +857,17 @@ public class AppmasterApplication {
 }</code></pre>
 </div>
 </div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>@EnableYarnBatchProcessing</code> tells Spring to enable Batch processing
+on appmaster.</p>
+</li>
+<li>
+<p>We <code>@AutoWired</code> builders for steps and jobs.</p>
+</li>
+</ul>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -778,18 +899,9 @@ public class ClientApplication {
 }</code></pre>
 </div>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="http://docs.spring.io/spring-boot/docs/1.0.0.RC3/api/org/springframework/boot/autoconfigure/EnableAutoConfiguration.html"><code>@EnableAutoConfiguration</code></a> tells Spring Boot to start adding beans based on classpath setting, other beans, and various property settings.</p>
-</li>
-<li>
-<p>Specific auto-configuration for Spring YARN components takes place in a same way than from a core Spring Boot.</p>
-</li>
-</ul>
-</div>
 <div class="paragraph">
-<p>The <code>main()</code> method uses Spring Boot&#8217;s <code>SpringApplication.run()</code> method to launch an application. From there we simply request a bean of type <a href="http://docs.spring.io/spring-hadoop/docs/2.0.0.M5/api/org/springframework/yarn/client/YarnClient.html"><code>YarnClient</code></a> and execute its <code>submitApplication()</code> method. What happens next depends on application configuration, which we go through later in this guide. Did you notice that there wasn&#8217;t a single line of XML?</p>
+<p><code>ClientApplication</code> is similar what we&#8217;ve used in other examples and
+its only purpose is to submit an application.</p>
 </div>
 </div>
 </div>
@@ -797,14 +909,15 @@ public class ClientApplication {
 <h2 id="_summary">Summary</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Congratulations! You&#8217;ve just developed a Spring YARN application!</p>
+<p>Congratulations! You&#8217;ve just developed a Spring YARN application
+executing a Spring Batch job!</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-02-19 11:57:09 GMT
+Last updated 2014-02-19 13:55:04 GMT
 </div>
 </div>
 </body>
