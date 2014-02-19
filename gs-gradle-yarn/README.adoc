@@ -131,37 +131,7 @@ on `clientBoot`, `containerBoot` and `appmasterBoot` tasks. This way
 all needed jar files will be build and packaged when gradle project is
 built.
 
-== Declare dependencies
-
-Spring for Apache Hadoop provides a transitive dependencies via its
-own maven poms against different Hadoop distribution. This way you
-don't need to worry about which dependencies are actually needed if
-you are building against vanilla Hadoop, Hortonworks Data Platform or
-Cloudera Distribution for Hadoop. 
-
-[source,groovy]
-.Vanilla Hadoop 2.2.X
-----
-dependencies {
-    compile("org.springframework.data:spring-yarn-boot:2.0.0.RELEASE")
-}
-----
-
-[source,groovy]
-.Hortonworks Data Platform 2.X
-----
-dependencies {
-    compile("org.springframework.data:spring-yarn-boot:2.0.0.RELEASE-hdp20")
-}
-----
-
-[source,groovy]
-.Cloudera Distrobution including Hadoop 5.X
-----
-dependencies {
-    compile("org.springframework.data:spring-yarn-boot:2.0.0.RELEASE-cdh5")
-}
-----
+include::https://raw.github.com/jvalkeal/spring-guide-work/master/macros/describe_shdp_yarn_deps_gradle.adoc[]
 
 == Build Application Packages
 
