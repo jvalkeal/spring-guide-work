@@ -32,19 +32,7 @@ If you're not familiar with gradle, refer to link:/guides/gs/gradle[Building Jav
 
 First you set up a Java project for Gradle to build. To keep the focus on Gradle, make the project as simple as possible for now.
 
-=== Create the directory structure
-
-In a project directory of your choosing, create the following subdirectory structure; for example, with `mkdir -p src/main/java/hello` on *nix systems:
-
-    └── src
-        └── main
-            ├── resources
-            └── java
-                └── hello
-                    ├── client
-                    ├── appmaster
-                    └── container
-
+include::https://raw.github.com/jvalkeal/spring-guide-work/master/macros/create_directory_structure_yarn_simple_hello.adoc[]
 
 Here you create a `ContainerApplication` class.
 

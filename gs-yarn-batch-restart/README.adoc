@@ -48,19 +48,7 @@ include::https://raw.github.com/spring-guides/getting-started-macros/master/how_
 
 First you set up a basic build script. You can use any build system you like when building apps with Spring, but the code you need to work with http://gradle.org[Gradle] is included here. If you're not familiar with it, refer to link:/guides/gs/gradle[Building Java Projects with Gradle].
 
-=== Create the directory structure
-
-In a project directory of your choosing, create the following subdirectory structure; for example, with `mkdir -p src/main/java/hello` on *nix systems:
-
-    └── src
-        └── main
-            ├── resources
-            └── java
-                └── hello
-                    ├── client
-                    ├── appmaster
-                    └── container
-
+include::https://raw.github.com/jvalkeal/spring-guide-work/master/macros/create_directory_structure_yarn_simple_hello.adoc[]
 
 === Create a Gradle build file
 Below is the https://github.com/spring-guides/{project_id}/blob/master/initial/build.gradle[initial Gradle build file]. If you are using link:/guides/gs/sts[Spring Tool Suite (STS)], you can import the guide directly.

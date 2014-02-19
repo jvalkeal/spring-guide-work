@@ -33,33 +33,7 @@ link:/guides/gs/maven[Building Java Projects with Maven].
 
 First you set up a Java project for Gradle to build. To keep the focus on Gradle, make the project as simple as possible for now.
 
-=== Create the directory structure
-
-In a project directory of your choosing, create the following subdirectory structure; for example, with `mkdir -p src/main/java/hello` on *nix systems:
-
-    ├── appmaster
-    ├   └── src
-    ├       └── main
-    ├           ├── resources
-    ├           └── java
-    ├               └── hello
-    ├                   └── appmaster
-    ├── container
-    ├   └── src
-    ├       └── main
-    ├           ├── resources
-    ├           └── java
-    ├               └── hello
-    ├                   └── container
-    ├── client
-    ├   └── src
-    ├       └── main
-    ├           ├── resources
-    ├           └── java
-    ├               └── hello
-    ├                   └── client
-    └── dist
-
+include::https://raw.github.com/jvalkeal/spring-guide-work/master/macros/create_directory_structure_yarn_complex_hello.adoc[]
 
 Here you create a `ContainerApplication` class.
 
