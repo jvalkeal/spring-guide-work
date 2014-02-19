@@ -1,8 +1,8 @@
 ---
-tags: [gradle]
+tags: [gradle,hadoop,yarn]
 projects: [spring-hadoop]
 ---
-:spring_boot_version: 1.0.0.RC1
+:spring_boot_version: 1.0.0.RC3
 :jdk: http://www.oracle.com/technetwork/java/javase/downloads/index.html
 :toc:
 :icons: font
