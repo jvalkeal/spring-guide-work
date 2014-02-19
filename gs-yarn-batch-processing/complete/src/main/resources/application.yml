@@ -4,9 +4,8 @@ spring:
             enabled: false
     yarn:
         batch:
-            job:
-                enabled: true
-                name: job
+            enabled: true
+            name: job
             jobs:
               - name: job
                 enabled: true

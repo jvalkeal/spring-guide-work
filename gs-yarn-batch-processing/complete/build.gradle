@@ -3,7 +3,7 @@ buildscript {
         maven { url "http://repo.spring.io/libs-milestone" }
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.0.0.RC1")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.0.0.RC3")
     }
 }
 
@@ -23,15 +23,15 @@ repositories {
 dependencies {
     compile("org.springframework.data:spring-yarn-batch:2.0.0.BUILD-SNAPSHOT-hadoop22")
     compile("org.springframework.data:spring-yarn-boot:2.0.0.BUILD-SNAPSHOT-hadoop22")
-	runtime("org.springframework.boot:spring-boot-starter-batch:1.0.0.RC1")
-	testCompile("org.springframework.data:spring-yarn-boot-test:2.0.0.BUILD-SNAPSHOT-hadoop22")
-	testCompile("org.hamcrest:hamcrest-core:1.2.1")
-	testCompile("org.hamcrest:hamcrest-library:1.2.1")
+    runtime("org.springframework.boot:spring-boot-starter-batch:1.0.0.RC1")
+    testCompile("org.springframework.data:spring-yarn-boot-test:2.0.0.BUILD-SNAPSHOT-hadoop22")
+    testCompile("org.hamcrest:hamcrest-core:1.2.1")
+    testCompile("org.hamcrest:hamcrest-library:1.2.1")
 }
 
 configurations {
-	compile.exclude group: "org.slf4j", module: "slf4j-log4j12"
-	runtime.exclude group: "org.slf4j", module: "slf4j-log4j12"
+    compile.exclude group: "org.slf4j", module: "slf4j-log4j12"
+    runtime.exclude group: "org.slf4j", module: "slf4j-log4j12"
 }
 
 task clientJar(type: Jar) {
@@ -81,5 +81,5 @@ build.dependsOn(bootJars)
 clean.doLast {ant.delete(dir: "target")}
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.8'
+    gradleVersion = '1.11'
 }

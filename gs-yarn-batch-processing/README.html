@@ -440,11 +440,11 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] { cursor: default; }
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://github.com/spring-guides/gs-yarn-boot-simple/archive/master.zip">Download</a> and unzip the source repository for this guide, or clone it using <a href="/understanding/Git">Git</a>:
-<code>git clone <a href="https://github.com/spring-guides/gs-yarn-boot-simple.git">https://github.com/spring-guides/gs-yarn-boot-simple.git</a></code></p>
+<p><a href="https://github.com/spring-guides/gs-yarn-batch-processing/archive/master.zip">Download</a> and unzip the source repository for this guide, or clone it using <a href="/understanding/Git">Git</a>:
+<code>git clone <a href="https://github.com/spring-guides/gs-yarn-batch-processing.git">https://github.com/spring-guides/gs-yarn-batch-processing.git</a></code></p>
 </li>
 <li>
-<p>cd into <code>gs-yarn-boot-simple/initial</code></p>
+<p>cd into <code>gs-yarn-batch-processing/initial</code></p>
 </li>
 <li>
 <p>Jump ahead to <a href="#initial">Create a Remote Batch Step</a>.</p>
@@ -452,7 +452,7 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] { cursor: default; }
 </ul>
 </div>
 <div class="paragraph">
-<p><strong>When you&#8217;re finished</strong>, you can check your results against the code in <code>gs-yarn-boot-simple/complete</code>.</p>
+<p><strong>When you&#8217;re finished</strong>, you can check your results against the code in <code>gs-yarn-batch-processing/complete</code>.</p>
 </div>
 </div>
 </div>
@@ -483,7 +483,7 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] { cursor: default; }
 <div class="sect2">
 <h3 id="_create_a_gradle_build_file">Create a Gradle build file</h3>
 <div class="paragraph">
-<p>Below is the <a href="https://github.com/spring-guides/gs-yarn-boot-simple/blob/master/initial/build.gradle">initial Gradle build file</a>. If you are using <a href="/guides/gs/sts">Spring Tool Suite (STS)</a>, you can import the guide directly.</p>
+<p>Below is the <a href="https://github.com/spring-guides/gs-yarn-batch-processing/blob/master/initial/build.gradle">initial Gradle build file</a>. If you are using <a href="/guides/gs/sts">Spring Tool Suite (STS)</a>, you can import the guide directly.</p>
 </div>
 <div class="paragraph">
 <p><code>build.gradle</code></p>
@@ -495,7 +495,7 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] { cursor: default; }
         maven { url "http://repo.spring.io/libs-milestone" }
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.0.0.RC1")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.0.0.RC3")
     }
 }
 
@@ -515,15 +515,15 @@ repositories {
 dependencies {
     compile("org.springframework.data:spring-yarn-batch:2.0.0.BUILD-SNAPSHOT-hadoop22")
     compile("org.springframework.data:spring-yarn-boot:2.0.0.BUILD-SNAPSHOT-hadoop22")
-	runtime("org.springframework.boot:spring-boot-starter-batch:1.0.0.RC1")
-	testCompile("org.springframework.data:spring-yarn-boot-test:2.0.0.BUILD-SNAPSHOT-hadoop22")
-	testCompile("org.hamcrest:hamcrest-core:1.2.1")
-	testCompile("org.hamcrest:hamcrest-library:1.2.1")
+    runtime("org.springframework.boot:spring-boot-starter-batch:1.0.0.RC1")
+    testCompile("org.springframework.data:spring-yarn-boot-test:2.0.0.BUILD-SNAPSHOT-hadoop22")
+    testCompile("org.hamcrest:hamcrest-core:1.2.1")
+    testCompile("org.hamcrest:hamcrest-library:1.2.1")
 }
 
 configurations {
-	compile.exclude group: "org.slf4j", module: "slf4j-log4j12"
-	runtime.exclude group: "org.slf4j", module: "slf4j-log4j12"
+    compile.exclude group: "org.slf4j", module: "slf4j-log4j12"
+    runtime.exclude group: "org.slf4j", module: "slf4j-log4j12"
 }
 
 task clientJar(type: Jar) {
@@ -573,7 +573,7 @@ build.dependsOn(bootJars)
 clean.doLast {ant.delete(dir: "target")}
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.8'
+    gradleVersion = '1.11'
 }</code></pre>
 </div>
 </div>
@@ -781,7 +781,7 @@ public class ClientApplication {
 <div class="ulist">
 <ul>
 <li>
-<p><a href="http://docs.spring.io/spring-boot/docs/1.0.0.RC1/api/org/springframework/boot/autoconfigure/EnableAutoConfiguration.html"><code>@EnableAutoConfiguration</code></a> tells Spring Boot to start adding beans based on classpath setting, other beans, and various property settings.</p>
+<p><a href="http://docs.spring.io/spring-boot/docs/1.0.0.RC3/api/org/springframework/boot/autoconfigure/EnableAutoConfiguration.html"><code>@EnableAutoConfiguration</code></a> tells Spring Boot to start adding beans based on classpath setting, other beans, and various property settings.</p>
 </li>
 <li>
 <p>Specific auto-configuration for Spring YARN components takes place in a same way than from a core Spring Boot.</p>
@@ -789,7 +789,7 @@ public class ClientApplication {
 </ul>
 </div>
 <div class="paragraph">
-<p>The <code>main()</code> method uses Spring Boot&#8217;s <code>SpringApplication.run()</code> method to launch an application. From there we simply request a bean of type <a href="http://docs.spring.io/spring-hadoop/docs/2.0.0.M4-hadoop22/api/org/springframework/yarn/client/YarnClient.html"><code>YarnClient</code></a> and execute its <code>submitApplication()</code> method. What happens next depends on application configuration, which we go through later in this guide. Did you notice that there wasn&#8217;t a single line of XML?</p>
+<p>The <code>main()</code> method uses Spring Boot&#8217;s <code>SpringApplication.run()</code> method to launch an application. From there we simply request a bean of type <a href="http://docs.spring.io/spring-hadoop/docs/2.0.0.M5/api/org/springframework/yarn/client/YarnClient.html"><code>YarnClient</code></a> and execute its <code>submitApplication()</code> method. What happens next depends on application configuration, which we go through later in this guide. Did you notice that there wasn&#8217;t a single line of XML?</p>
 </div>
 </div>
 </div>
@@ -804,7 +804,7 @@ public class ClientApplication {
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-02-12 18:09:58 GMT
+Last updated 2014-02-19 11:57:09 GMT
 </div>
 </div>
 </body>
