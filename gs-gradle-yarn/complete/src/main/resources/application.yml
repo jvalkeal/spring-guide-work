@@ -1,15 +1,3 @@
 spring:
     yarn:
         appName: gs-yarn-gradle
-        applicationDir: /app/gs-yarn-gradle/
-        fsUri: hdfs://localhost:8020
-        rmAddress: localhost:8032
-        schedulerAddress: localhost:8030
-        client:
-            appmasterFile: gs-yarn-gradle-appmaster-0.1.0.jar
-            files:
-              - "file:build/libs/gs-yarn-gradle-container-0.1.0.jar"
-              - "file:build/libs/gs-yarn-gradle-appmaster-0.1.0.jar"
-        appmaster:
-            containerCount: 1
-            containerFile: gs-yarn-gradle-container-0.1.0.jar

@@ -14,6 +14,7 @@ This guide walks you through using Gradle to build a simple Spring YARN project.
 
 You'll create a simple app and then build it using Gradle.
 
+NOTE: In this guide we are not trying to create fully working YARN application, instead we focus on project and build model.
 
 == What you'll need
 
@@ -45,11 +46,15 @@ In a project directory of your choosing, create the following subdirectory struc
                     └── container
 
 
+Here you create a `ContainerApplication` class.
+
 `src/main/java/hello/container/ContainerApplication.java`
 [source,java]
 ----
 include::complete/src/main/java/hello/container/ContainerApplication.java[]
 ----
+
+Here you create an `AppmasterApplication` class.
 
 `src/main/java/hello/appmaster/AppmasterApplication.java`
 [source,java]
@@ -57,11 +62,15 @@ include::complete/src/main/java/hello/container/ContainerApplication.java[]
 include::complete/src/main/java/hello/appmaster/AppmasterApplication.java[]
 ----
 
+Here you create a `ClientApplication` class.
+
 `src/main/java/hello/client/ClientApplication.java`
 [source,java]
 ----
 include::complete/src/main/java/hello/client/ClientApplication.java[]
 ----
+
+Here you create a `application` yaml configuration file.
 
 `src/main/resources/application.yml`
 [source,yaml]
@@ -79,7 +88,7 @@ Here you create a `gradle.build` file.
 include::complete/build.gradle[tags=snippetA]
 ----
 
-We're about to use Spring Boot Gradle plugin so `repository` and `dependency` needs to be defined within `buildscript` section.
+We're about to use Spring Boot Gradle plugin so `repository` and `dependency` needs to be defined within a `buildscript` section.
 
 [source,groovy]
 ----
@@ -93,37 +102,78 @@ We defind project version to be `0.1.0` and apply plugins for `eclipse`, `idea` 
 include::complete/build.gradle[tags=snippetC]
 ----
 
-We add dependency to Spring Hadoop.
+We added `repositories` to resolve maven dependencies.
 
 [source,groovy]
 ----
 include::complete/build.gradle[tags=snippetD]
 ----
 
-We use a custom `Jar` and `BootRepackage` tasks to build a client jar.
+We add dependency to Spring Hadoop.
 
 [source,groovy]
 ----
 include::complete/build.gradle[tags=snippetE]
 ----
 
-We create additional jars for container and appmaster.
+We use a custom `Jar` and `BootRepackage` tasks to build a client jar.
+We only want to use include classes meant for `client` so we excluded
+everything under `appmaster` and `container` packages.
 
 [source,groovy]
 ----
 include::complete/build.gradle[tags=snippetF]
 ----
 
-Disabling main jar and bootRepackages tasks and hook other to build process.
+We created additional jars for `container` and `appmaster` using same
+logic we used for `client`.
 
 [source,groovy]
 ----
 include::complete/build.gradle[tags=snippetG]
 ----
 
+Gradle plugin for `Spring Boot` automatically creates a task to
+repackage a main jar file created from a project. Because we manually
+created three different jar files out from a single project, it is a
+good advice to disable main `jar` and `bootRepackage` tasks.
+
+Finally we create a simple task dependency for `build` task to depend
+on `clientBoot`, `containerBoot` and `appmasterBoot` tasks. This way
+all needed jar files will be build and packaged when gradle project is
+built.
+
 == Declare dependencies
 
+Spring for Apache Hadoop provides a transitive dependencies via its
+own maven poms against different Hadoop distribution. This way you
+don't need to worry about which dependencies are actually needed if
+you are building against vanilla Hadoop, Hortonworks Data Platform or
+Cloudera Distribution for Hadoop. 
 
+[source,groovy]
+.Vanilla Hadoop 2.2.X
+----
+dependencies {
+    compile("org.springframework.data:spring-yarn-boot:2.0.0.RELEASE")
+}
+----
+
+[source,groovy]
+.Hortonworks Data Platform 2.X
+----
+dependencies {
+    compile("org.springframework.data:spring-yarn-boot:2.0.0.RELEASE-hdp20")
+}
+----
+
+[source,groovy]
+.Cloudera Distrobution including Hadoop 5.X
+----
+dependencies {
+    compile("org.springframework.data:spring-yarn-boot:2.0.0.RELEASE-cdh5")
+}
+----
 
 == Build Application Packages
 
