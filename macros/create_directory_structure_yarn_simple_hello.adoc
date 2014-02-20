@@ -1,7 +1,19 @@
 === Create the directory structure
 
 In a project directory of your choosing, create the following
-subdirectory structure; for example, with 
+subdirectory structure:
+
+    └── src
+        └── main
+            ├── java
+            │   └── hello
+            │       ├── appmaster
+            │       ├── client
+            │       └── container
+            └── resources
+
+
+for example, with 
 
 ```
 mkdir -p src/main/resources 
@@ -10,13 +22,4 @@ mkdir -p src/main/java/hello/appmaster
 mkdir -p src/main/java/hello/container 
 ```
 on *nix systems:
-
-    └── src
-        └── main
-            ├── java
-            │   └── hello
-            │       ├── appmaster
-            │       ├── client
-            │       └── container
-            └── resources
 

@@ -69,7 +69,7 @@ include::complete/src/main/resources/application.yml[]
 [[initial]]
 == Understanding Gradle Usage with Spring YARN
 
-Here you create a `gradle.build` file.
+Here you create a `build.gradle` file.
 
 [source,groovy]
 ----
