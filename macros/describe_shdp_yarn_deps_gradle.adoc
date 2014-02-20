@@ -3,11 +3,11 @@
 Spring for Apache Hadoop provides a transitive dependencies via its
 own maven poms against different Hadoop distribution. This way you
 don't need to worry about which dependencies are actually needed if
-you are building against vanilla Hadoop, Hortonworks Data Platform or
-Cloudera Distribution for Hadoop.·
+you are building against Apache Hadoop, Hortonworks Data Platform or
+Cloudera CDH.·
 
 [source,groovy]
-.Vanilla Hadoop 2.2.X
+.Apache Hadoop 2.2.X
 ----
 dependencies {
     compile("org.springframework.data:spring-yarn-boot:2.0.0.RELEASE")
@@ -23,7 +23,7 @@ dependencies {
 ----
 
 [source,groovy]
-.Cloudera Distrobution including Hadoop 5.X
+.Cloudera CDH 5.X
 ----
 dependencies {
     compile("org.springframework.data:spring-yarn-boot:2.0.0.RELEASE-cdh5")
