@@ -25,7 +25,7 @@ NOTE: In this guide we are not trying to create fully working YARN application, 
 
 include::https://raw.github.com/spring-guides/getting-started-macros/master/how_to_complete_this_guide.adoc[]
 
-If you're not familiar with gradle, refer to link:/guides/gs/gradle[Building Java Projects with Gradle].
+If you're not familiar with gradle or don't have it installed, refer to link:/guides/gs/gradle[Building Java Projects with Gradle].
 
 [[scratch]]
 == Set up the project
@@ -34,7 +34,7 @@ First you set up a Java project for Gradle to build. To keep the focus on Gradle
 
 include::https://raw.github.com/jvalkeal/spring-guide-work/master/macros/create_directory_structure_yarn_simple_hello.adoc[]
 
-Here you create a `ContainerApplication` class.
+Firts, let's create a `ContainerApplication` class.
 
 `src/main/java/hello/container/ContainerApplication.java`
 [source,java]
@@ -42,7 +42,7 @@ Here you create a `ContainerApplication` class.
 include::complete/src/main/java/hello/container/ContainerApplication.java[]
 ----
 
-Here you create an `AppmasterApplication` class.
+Next, we create an `AppmasterApplication` class.
 
 `src/main/java/hello/appmaster/AppmasterApplication.java`
 [source,java]
@@ -50,7 +50,7 @@ Here you create an `AppmasterApplication` class.
 include::complete/src/main/java/hello/appmaster/AppmasterApplication.java[]
 ----
 
-Here you create a `ClientApplication` class.
+The last Java class we need to create is a `ClientApplication` class.
 
 `src/main/java/hello/client/ClientApplication.java`
 [source,java]
@@ -58,7 +58,7 @@ Here you create a `ClientApplication` class.
 include::complete/src/main/java/hello/client/ClientApplication.java[]
 ----
 
-Here you create a `application` yaml configuration file.
+Now we need to create an `application` YAML configuration file.
 
 `src/main/resources/application.yml`
 [source,yaml]
@@ -69,39 +69,34 @@ include::complete/src/main/resources/application.yml[]
 [[initial]]
 == Understanding Gradle Usage with Spring YARN
 
-Here you create a `build.gradle` file.
+We need to create a `build.gradle` file where we define everything needed for the build.
+
+We will be using the Spring Boot Gradle plugin so `repository` and `dependency` needs to be defined within a `buildscript` section.
 
 [source,groovy]
 ----
 include::complete/build.gradle[tags=snippetA]
 ----
 
-We're about to use Spring Boot Gradle plugin so `repository` and `dependency` needs to be defined within a `buildscript` section.
+Belwo that section we add the following -- project version as `0.1.0` and apply plugins for `java`, `eclipse`, `idea` and `spring-boot`.
 
 [source,groovy]
 ----
 include::complete/build.gradle[tags=snippetB]
 ----
 
-We defind project version to be `0.1.0` and apply plugins for `eclipse`, `idea` and `spring-boot`.
+Next we add `repositories` to resolve all of the third party jar dependencies via Maven repositories.
 
 [source,groovy]
 ----
 include::complete/build.gradle[tags=snippetC]
 ----
 
-We added `repositories` to resolve maven dependencies.
+Next, we add a dependency on Spring for Apache Hadoop project.
 
 [source,groovy]
 ----
 include::complete/build.gradle[tags=snippetD]
-----
-
-We add dependency to Spring Hadoop.
-
-[source,groovy]
-----
-include::complete/build.gradle[tags=snippetE]
 ----
 
 We use a custom `Jar` and `BootRepackage` tasks to build a client jar.
@@ -110,26 +105,30 @@ everything under `appmaster` and `container` packages.
 
 [source,groovy]
 ----
-include::complete/build.gradle[tags=snippetF]
+include::complete/build.gradle[tags=snippetE]
 ----
 
-We created additional jars for `container` and `appmaster` using same
-logic we used for `client`.
+We also create additional jars for `container` and `appmaster` using the same
+logic that we used for `client`.
+
+[source,groovy]
+----
+include::complete/build.gradle[tags=snippetF]
+----
+The Gradle plugin for `Spring Boot` automatically creates a task to
+repackage a main jar file created from a project. Since we manually
+created three different jar files  from a single project, it is a
+good practice to disable main `jar` and `bootRepackage` tasks.
+
+Finally, we create a simple task dependency for `build` task to depend
+on `clientBoot`, `containerBoot` and `appmasterBoot` tasks. This way
+all needed jar files will be build and packaged when gradle project is
+built.
 
 [source,groovy]
 ----
 include::complete/build.gradle[tags=snippetG]
 ----
-
-Gradle plugin for `Spring Boot` automatically creates a task to
-repackage a main jar file created from a project. Because we manually
-created three different jar files out from a single project, it is a
-good advice to disable main `jar` and `bootRepackage` tasks.
-
-Finally we create a simple task dependency for `build` task to depend
-on `clientBoot`, `containerBoot` and `appmasterBoot` tasks. This way
-all needed jar files will be build and packaged when gradle project is
-built.
 
 include::https://raw.github.com/jvalkeal/spring-guide-work/master/macros/describe_shdp_yarn_deps_gradle.adoc[]
 
@@ -139,7 +138,7 @@ Run build.
 
 [source,text]
 ----
-./gradlew clean build
+gradle clean build
 ----
 
 You should see three jar files created.
@@ -150,6 +149,13 @@ build/libs/gs-yarn-gradle-client-0.1.0.jar
 build/libs/gs-yarn-gradle-container-0.1.0.jar
 build/libs/gs-yarn-gradle-appmaster-0.1.0.jar
 ----
+
+Spring Boot modifies the jars that your build creates. The original jar files are saved with a `.original` extension 
+so you will see those fules in the `build\libs` directory as well. 
+
+You can run the project with `java -jar build/libs/gs-yarn-gradle-client-0.1.0.jar` but we haven't added the code to 
+actually submit the YARN application yet. So, all you will see is some logging mesages. You will build a complete
+application that you can submit to YARN in the other Getting STarted Guides for Spring YARN.
 
 == Summary
 
