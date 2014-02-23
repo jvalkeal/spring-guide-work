@@ -8,6 +8,7 @@ build
 *.iml
 *.ipr
 *.iws
+README.html
 metastore_db
 /.idea/
 .DS_Store
