@@ -21,10 +21,10 @@ repositories {
 }
 
 dependencies {
-    compile("org.springframework.data:spring-yarn-batch:2.0.0.BUILD-SNAPSHOT-hadoop22")
-    compile("org.springframework.data:spring-yarn-boot:2.0.0.BUILD-SNAPSHOT-hadoop22")
+    compile("org.springframework.data:spring-yarn-batch:2.0.0.BUILD-SNAPSHOT")
+    compile("org.springframework.data:spring-yarn-boot:2.0.0.BUILD-SNAPSHOT")
     runtime("org.springframework.boot:spring-boot-starter-batch:1.0.0.RC1")
-    testCompile("org.springframework.data:spring-yarn-boot-test:2.0.0.BUILD-SNAPSHOT-hadoop22")
+    testCompile("org.springframework.data:spring-yarn-boot-test:2.0.0.BUILD-SNAPSHOT")
     testCompile("org.hamcrest:hamcrest-core:1.2.1")
     testCompile("org.hamcrest:hamcrest-library:1.2.1")
 }

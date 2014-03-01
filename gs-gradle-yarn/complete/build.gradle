@@ -28,7 +28,7 @@ repositories {
 
 // tag::snippetD[]
 dependencies {
-    compile("org.springframework.data:spring-yarn-boot:2.0.0.BUILD-SNAPSHOT-hadoop22")
+    compile("org.springframework.data:spring-yarn-boot:2.0.0.BUILD-SNAPSHOT")
 }
 // end::snippetD[]
 
