@@ -1,15 +1,17 @@
 spring:
+    hadoop:
+        fsUri: hdfs://localhost:8020
+        resourceManagerHost: localhost
     yarn:
         appName: gs-yarn-basic
         applicationDir: /app/gs-yarn-basic/
-        fsUri: hdfs://localhost:8020
-        rmAddress: localhost:8032
-        schedulerAddress: localhost:8030
         client:
-            appmasterFile: gs-yarn-basic-appmaster-0.1.0.jar
             files:
               - "file:build/libs/gs-yarn-basic-container-0.1.0.jar"
               - "file:build/libs/gs-yarn-basic-appmaster-0.1.0.jar"
+            launchcontext:
+                archiveFile: gs-yarn-basic-appmaster-0.1.0.jar
         appmaster:
             containerCount: 1
-            containerFile: gs-yarn-basic-container-0.1.0.jar
+            launchcontext:
+                archiveFile: gs-yarn-basic-container-0.1.0.jar
