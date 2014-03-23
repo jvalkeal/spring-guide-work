@@ -87,37 +87,6 @@ include::initial/build.gradle[]
 In above gradle build file we simply create three different jars, each having classes for its specific role. These jars are then repackaged by Spring Boot's gradle plugin to create an executable jars.
 
 [[initial]]
-== Create a Yarn Client
-
-Here you create a `ClientApplication` class.
-
-`src/main/java/hello/client/ClientApplication.java`
-[source,java]
-----
-include::complete/src/main/java/hello/client/ClientApplication.java[]
-----
-
- - {EnableAutoConfiguration}[`@EnableAutoConfiguration`] tells Spring Boot to start adding beans based on classpath setting, other beans, and various property settings.
- - Specific auto-configuration for Spring YARN components takes place in a same way than from a core Spring Boot.
-
-The `main()` method uses Spring Boot's `SpringApplication.run()` method to launch an application. From there we simply request a bean of type {YarnClient}[`YarnClient`] and execute its `submitApplication()` method. What happens next depends on application configuration, which we go through later in this guide. Did you notice that there wasn't a single line of XML?
-
-== Create a Yarn Appmaster
-
-Here you create an `AppmasterApplication` class.
-
-`src/main/java/hello/appmaster/AppmasterApplication.java`
-[source,java]
-----
-include::complete/src/main/java/hello/appmaster/AppmasterApplication.java[]
-----
-
-Application class for {YarnAppmaster}[`YarnAppmaster`] looks even simpler than what we just did for `ClientApplication`. Again the `main()` method uses Spring Boot's `SpringApplication.run()` method to launch an application.
-
-One might argue that if you use this type of dummy class to basically fire up your application, could we just use a generic class for this? Well simple answer is yes, we even have a generic {SpringYarnBootApplication}[`SpringYarnBootApplication`] class just for this purpose. You'd define that to be your main class for an executable jar and you'd accomplish this during the gradle build.
-
-In real life, however, you most likely need to start adding more custom functionality to your application component and you'd do that by start adding more beans. To do that you need to define a Spring {SpringConfigurationAnnotation}[`@Configuration`] or {SpringComponentScanAnnotation}[`@ComponentScan`]. `AppmasterApplication` would then act as your main starting point to define more custom functionality. Effectively this is exactly what we do with a {YarnContainer}[`YarnContainer`] in section below.
-
 == Create a Yarn Container
 
 Here you create `ContainerApplication` and `HelloPojo` classes.
@@ -150,6 +119,37 @@ Within this class we can use {OnYarnContainerStartAnnotation}[`@OnYarnContainerS
 
 To demonstrate that we actually have some real functionality in this class, we simply use Spring Hadoop's {FsShell}[`@FsShell`] to list entries from a root of a `HDFS` file system. We needed to have Hadoop's `Configuration` which is prepared for you so that you can just autowire it.
 
+== Create a Yarn Appmaster
+
+Here you create an `AppmasterApplication` class.
+
+`src/main/java/hello/appmaster/AppmasterApplication.java`
+[source,java]
+----
+include::complete/src/main/java/hello/appmaster/AppmasterApplication.java[]
+----
+
+Application class for {YarnAppmaster}[`YarnAppmaster`] looks even simpler than what we just did for `ClientApplication`. Again the `main()` method uses Spring Boot's `SpringApplication.run()` method to launch an application.
+
+One might argue that if you use this type of dummy class to basically fire up your application, could we just use a generic class for this? Well simple answer is yes, we even have a generic {SpringYarnBootApplication}[`SpringYarnBootApplication`] class just for this purpose. You'd define that to be your main class for an executable jar and you'd accomplish this during the gradle build.
+
+In real life, however, you most likely need to start adding more custom functionality to your application component and you'd do that by start adding more beans. To do that you need to define a Spring {SpringConfigurationAnnotation}[`@Configuration`] or {SpringComponentScanAnnotation}[`@ComponentScan`]. `AppmasterApplication` would then act as your main starting point to define more custom functionality. Effectively this is exactly what we do with a {YarnContainer}[`YarnContainer`] in section below.
+
+== Create a Yarn Client
+
+Here you create a `ClientApplication` class.
+
+`src/main/java/hello/client/ClientApplication.java`
+[source,java]
+----
+include::complete/src/main/java/hello/client/ClientApplication.java[]
+----
+
+ - {EnableAutoConfiguration}[`@EnableAutoConfiguration`] tells Spring Boot to start adding beans based on classpath setting, other beans, and various property settings.
+ - Specific auto-configuration for Spring YARN components takes place in a same way than from a core Spring Boot.
+
+The `main()` method uses Spring Boot's `SpringApplication.run()` method to launch an application. From there we simply request a bean of type {YarnClient}[`YarnClient`] and execute its `submitApplication()` method. What happens next depends on application configuration, which we go through later in this guide. Did you notice that there wasn't a single line of XML?
+
 == Create an Application Configuration
 
 Create a new yaml configuration file.
@@ -175,16 +175,16 @@ Below listing shows files after a succesfull gradle build.
 [source]
 ----
 $ ls -lt build/libs/
--rw-r--r-- 1 hadoop hadoop 35975001 Feb  2 17:39 gs-yarn-boot-simple-container-0.1.0.jar
--rw-r--r-- 1 hadoop hadoop 35973937 Feb  2 17:39 gs-yarn-boot-simple-client-0.1.0.jar
--rw-r--r-- 1 hadoop hadoop 35973840 Feb  2 17:39 gs-yarn-boot-simple-appmaster-0.1.0.jar
+-rw-r--r-- 1 hadoop hadoop 37385828 Mar 23 12:39 gs-yarn-basic-container-0.1.0.jar
+-rw-r--r-- 1 hadoop hadoop 37384804 Mar 23 12:39 gs-yarn-basic-client-0.1.0.jar
+-rw-r--r-- 1 hadoop hadoop 37384708 Mar 23 12:39 gs-yarn-basic-appmaster-0.1.0.jar
 ----
 
 Simply run your executable client jar.
 
 [source]
 ----
-$ java -jar build/libs/gs-yarn-boot-simple-client-0.1.0.jar
+$ java -jar build/libs/gs-yarn-basic-client-0.1.0.jar
 ----
 
 Using a Resource Manager UI you can see status of an application.
@@ -196,23 +196,24 @@ To find Hadoop's application logs, do a little find within a configured userlogs
 [source]
 ----
 $ find hadoop/logs/userlogs/|grep std
-
-hadoop/logs/userlogs/application_1391348442831_0001/container_1391348442831_0001_01_000002/Container.stdout
-hadoop/logs/userlogs/application_1391348442831_0001/container_1391348442831_0001_01_000002/Container.stderr
-hadoop/logs/userlogs/application_1391348442831_0001/container_1391348442831_0001_01_000001/Appmaster.stdout
-hadoop/logs/userlogs/application_1391348442831_0001/container_1391348442831_0001_01_000001/Appmaster.stderr
+hadoop/logs/userlogs/application_1395578417086_0001/container_1395578417086_0001_01_000001/Appmaster.stdout
+hadoop/logs/userlogs/application_1395578417086_0001/container_1395578417086_0001_01_000001/Appmaster.stderr
+hadoop/logs/userlogs/application_1395578417086_0001/container_1395578417086_0001_01_000002/Container.stdout
+hadoop/logs/userlogs/application_1395578417086_0001/container_1395578417086_0001_01_000002/Container.stderr
 ----
 
 Grep logging output from a `HelloPojo` class.
 
 [source]
 ----
-$ grep HelloPojo hadoop/logs/userlogs/application_1391348442831_0001/container_1391348442831_0001_01_000002/Container.stdout
-
-[2014-02-02 17:40:38,314] boot - 11944  INFO [main] --- HelloPojo: Hello from HelloPojo
-[2014-02-02 17:40:38,315] boot - 11944  INFO [main] --- HelloPojo: About to list from hdfs root content
-[2014-02-02 17:40:41,134] boot - 11944  INFO [main] --- HelloPojo: FileStatus{path=hdfs://localhost:8020/; isDirectory=true; modification_time=1390823919636; access_time=0; owner=root; group=supergroup; permission=rwxr-xr-x; isSymlink=false}
-[2014-02-02 17:40:41,135] boot - 11944  INFO [main] --- HelloPojo: FileStatus{path=hdfs://localhost:8020/app; isDirectory=true; modification_time=1391203430490; access_time=0; owner=jvalkealahti; group=supergroup; permission=rwxr-xr-x; isSymlink=false}
+$ grep HelloPojo hadoop/logs/userlogs/application_1395578417086_0001/container_1395578417086_0001_01_000002/Container.stdout
+[2014-03-23 12:42:05.763] boot - 17064  INFO [main] --- HelloPojo: Hello from HelloPojo
+[2014-03-23 12:42:05.763] boot - 17064  INFO [main] --- HelloPojo: About to list from hdfs root content
+[2014-03-23 12:42:06.745] boot - 17064  INFO [main] --- HelloPojo: FileStatus{path=hdfs://localhost:8020/; isDirectory=true; modification_time=1395397562421; access_time=0; owner=root;
+group=supergroup; permission=rwxr-xr-x; isSymlink=false}
+[2014-03-23 12:42:06.746] boot - 17064  INFO [main] --- HelloPojo:
+FileStatus{path=hdfs://localhost:8020/app; isDirectory=true;
+modification_time=1395501405412; access_time=0; owner=hadoop; group=supergroup; permission=rwxr-xr-x; isSymlink=false}
 ----
 
 

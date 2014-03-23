@@ -16,7 +16,7 @@ import org.springframework.yarn.batch.config.EnableYarnRemoteBatchProcessing;
 public class ContainerApplication {
 
 	@Autowired
-    private StepBuilderFactory steps;
+	private StepBuilderFactory steps;
 
 	@Bean
 	public Step remoteStep1() throws Exception {
