@@ -19,11 +19,6 @@ spring:
                 failNext: false
                 restart: true
                 failRestart: false
-                parameters:
-                  ? job1key1
-                  : job1val1
-                  ? job1key2
-                  : job1val2
         appName: batch-restart-db-boot
         applicationDir: /app/batch-restart-db-boot/
         client:

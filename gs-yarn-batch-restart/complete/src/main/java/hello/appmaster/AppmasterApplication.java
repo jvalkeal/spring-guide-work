@@ -14,7 +14,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.yarn.am.YarnAppmaster;
 import org.springframework.yarn.batch.config.EnableYarnBatchProcessing;
 import org.springframework.yarn.batch.partition.StaticPartitionHandler;
 
@@ -28,9 +27,6 @@ public class AppmasterApplication {
 
 	@Autowired
 	private StepBuilderFactory stepFactory;
-
-	@Autowired
-	private YarnAppmaster yarnAppmaster;
 
 	@Bean
 	public Job job() throws Exception {

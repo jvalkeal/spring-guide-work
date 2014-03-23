@@ -64,10 +64,10 @@ In above gradle build file we simply create three different jars, each having cl
 [[initial]]
 == Create a Remote Batch Step
 
-`src/main/java/hello/container/PrintTasklet.java`
+`src/main/java/hello/container/HdfsTasklet.java`
 [source,java]
 ----
-include::complete/src/main/java/hello/container/PrintTasklet.java[]
+include::complete/src/main/java/hello/container/HdfsTasklet.java[]
 ----
 
 Here you create a `ContainerApplication` class.

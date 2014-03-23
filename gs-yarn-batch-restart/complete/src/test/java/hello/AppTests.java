@@ -18,21 +18,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.Resource;
 import org.springframework.data.hadoop.fs.FsShell;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.yarn.boot.test.junit.AbstractBootYarnClusterTests;
-import org.springframework.yarn.boot.test.junit.AbstractBootYarnClusterTests.EmptyConfig;
-import org.springframework.yarn.test.context.MiniYarnCluster;
-import org.springframework.yarn.test.context.YarnDelegatingSmartContextLoader;
+import org.springframework.yarn.test.context.MiniYarnClusterTest;
 import org.springframework.yarn.test.junit.ApplicationInfo;
 import org.springframework.yarn.test.support.ContainerLogUtils;
 
-@ContextConfiguration(loader = YarnDelegatingSmartContextLoader.class, classes = EmptyConfig.class)
-@MiniYarnCluster
+@MiniYarnClusterTest
 public class AppTests extends AbstractBootYarnClusterTests {
 
-	@SuppressWarnings("resource")
 	@Test
-	public void testAppSubmission() throws Exception {
+	public void testApp() throws Exception {
 		FsShell shell = new FsShell(getConfiguration());
 		String[] args = new String[] {
 				"--spring.yarn.client.files[0]=file:build/libs/gs-yarn-batch-restart-appmaster-0.1.0.jar",
@@ -47,6 +42,7 @@ public class AppTests extends AbstractBootYarnClusterTests {
 
 		shell.touchz("/tmp/remoteStep2partition0");
 		shell.touchz("/tmp/remoteStep2partition1");
+		shell.close();
 
 		ApplicationInfo info2 = submitApplicationAndWait(ClientApplication.class, args, 2, TimeUnit.MINUTES);
 		assertThat(info2.getYarnApplicationState(), is(YarnApplicationState.FINISHED));
