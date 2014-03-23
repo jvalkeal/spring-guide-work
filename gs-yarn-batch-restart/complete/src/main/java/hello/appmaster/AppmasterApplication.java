@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.yarn.am.YarnAppmaster;
 import org.springframework.yarn.batch.config.EnableYarnBatchProcessing;
-import org.springframework.yarn.batch.partition.StaticBatchPartitionHandler;
+import org.springframework.yarn.batch.partition.StaticPartitionHandler;
 
 @Configuration
 @EnableAutoConfiguration
@@ -69,7 +69,7 @@ public class AppmasterApplication {
 
 	@Bean
 	protected PartitionHandler partitionHandler1() {
-		StaticBatchPartitionHandler handler = new StaticBatchPartitionHandler();
+		StaticPartitionHandler handler = new StaticPartitionHandler();
 		handler.setStepName("remoteStep1");
 		handler.setGridSize(2);
 		return handler;
@@ -77,7 +77,7 @@ public class AppmasterApplication {
 
 	@Bean
 	protected PartitionHandler partitionHandler2() {
-		StaticBatchPartitionHandler handler = new StaticBatchPartitionHandler();
+		StaticPartitionHandler handler = new StaticPartitionHandler();
 		handler.setStepName("remoteStep2");
 		handler.setGridSize(2);
 		return handler;

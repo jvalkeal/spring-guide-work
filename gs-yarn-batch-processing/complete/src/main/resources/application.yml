@@ -2,6 +2,9 @@ spring:
     batch:
         job:
             enabled: false
+    hadoop:
+        fsUri: hdfs://localhost:8020
+        resourceManagerHost: localhost
     yarn:
         batch:
             enabled: true
@@ -12,14 +15,13 @@ spring:
                 next: true
         appName: gs-yarn-batch-processing
         applicationDir: /app/gs-yarn-batch-processing/
-        fsUri: hdfs://localhost:8020
-        rmAddress: localhost:8032
-        schedulerAddress: localhost:8030
         client:
-            appmasterFile: gs-yarn-batch-processing-appmaster-0.1.0.jar
             files:
               - "file:build/libs/gs-yarn-batch-processing-container-0.1.0.jar"
               - "file:build/libs/gs-yarn-batch-processing-appmaster-0.1.0.jar"
+            launchcontext:
+                archiveFile: gs-yarn-batch-processing-appmaster-0.1.0.jar
         appmaster:
-            waitLatch: false
-            containerFile: gs-yarn-batch-processing-container-0.1.0.jar
+            keepContextAlive: false
+            launchcontext:
+                archiveFile: gs-yarn-batch-processing-container-0.1.0.jar
