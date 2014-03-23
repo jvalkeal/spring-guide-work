@@ -3,7 +3,7 @@ buildscript {
         maven { url "http://repo.spring.io/libs-milestone" }
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.0.0.RC3")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.0.0.RC5")
     }
 }
 
@@ -53,14 +53,17 @@ task containerJar(type: Jar) {
 
 task clientBoot(type: BootRepackage, dependsOn: clientJar) {
     withJarTask = clientJar
+    mainClass = 'hello.client.ClientApplication'
 }
 
 task appmasterBoot(type: BootRepackage, dependsOn: appmasterJar) {
     withJarTask = appmasterJar
+    mainClass = 'hello.appmaster.AppmasterApplication'
 }
 
 task containerBoot(type: BootRepackage, dependsOn: containerJar) {
     withJarTask = containerJar
+    mainClass = 'hello.container.ContainerApplication'
 }
 
 jar.enabled = false

@@ -13,13 +13,13 @@ subdirectory structure:
             └── resources
 
 
-for example, with 
+for example, with
 
 ```
-mkdir -p src/main/resources 
-mkdir -p src/main/java/hello/client 
-mkdir -p src/main/java/hello/appmaster 
-mkdir -p src/main/java/hello/container 
+mkdir -p src/main/resources
+mkdir -p src/main/java/hello/client
+mkdir -p src/main/java/hello/appmaster
+mkdir -p src/main/java/hello/container
 ```
 on *nix systems:
 

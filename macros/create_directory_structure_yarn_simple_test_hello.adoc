@@ -14,3 +14,13 @@ In a project directory of your choosing, create the following subdirectory struc
                     ├── appmaster
                     └── container
 
+for example, with
+
+```
+mkdir -p src/test/java/hello/hello
+mkdir -p src/main/resources
+mkdir -p src/main/java/hello/client
+mkdir -p src/main/java/hello/appmaster
+mkdir -p src/main/java/hello/container
+```
+on *nix systems:

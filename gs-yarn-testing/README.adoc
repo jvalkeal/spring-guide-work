@@ -48,13 +48,13 @@ include::complete/src/test/java/hello/AppTests.java[]
 
 Let's go through step by step what's happening in this `JUnit` class. As already mentioned earlier we don't need any existing or running Hadoop instances, instead testing framework from Spring YARN provides an easy way to fire up a mini cluster where your tests can be run in an isolated environment. 
 
- - `@MiniYarnCluster` tells Spring to start a Hadoop's mini cluster having components for `HDFS` and `YARN`. Hadoop's configuration from this minicluster is automatically injected into your testing context.
- - `@ContextConfiguration` together with `YarnDelegatingSmartContextLoader` tells Spring to prepare a testing context for a mini cluster. `EmptyConfig` is a simple helper class to use if there are no additional configuration for tests.
+ - `@MiniYarnClusterTest` is a composed annotation telling Spring to start a Hadoop's mini cluster having components for `HDFS` and `YARN`. Hadoop's configuration from this minicluster is automatically injected into your testing context.
  - `AbstractBootYarnClusterTests` is a class containing a lot of base functionality what you need in your tests.
 
 Then it's time to deploy the application into a running minicluster
 
- - `submitApplicationAndWait()` method simply runs your `ClientApplication` and expects it to an application deployment. On default it will wait 60 seconds an application to finish and returns an current state.
+ - `submitApplicationAndWait()` method simply runs your
+   `ClientApplication` and expects it to do an application deployment. On default it will wait 60 seconds an application to finish and returns a current state.
  - We make sure that we have a correct application state
 
 We use `ContainerLogUtils` to find our container logs files from a minicluster.
