@@ -5,12 +5,12 @@ subdirectory structure:
 
     └── src
         └── main
-            ├── java
-            │   └── hello
-            │       ├── appmaster
-            │       ├── client
-            │       └── container
-            └── resources
+            ├── resources
+            └── java
+                └── hello
+                    ├── appmaster
+                    ├── client
+                    └── container
 
 
 for example, with

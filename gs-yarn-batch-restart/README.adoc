@@ -3,7 +3,7 @@ tags: [hadoop,yarn,batch]
 projects: [spring-hadoop]
 ---
 :spring_version: 4.0.1.RELEASE
-:spring_boot_version: 1.0.0.RC3
+:spring_boot_version: 1.0.0.RC5
 :spring_hadoop_version: 2.0.0.M5
 :java_version: 1.6
 :Component: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/stereotype/Component.html
@@ -64,18 +64,18 @@ In above gradle build file we simply create three different jars, each having cl
 [[initial]]
 == Create a Remote Batch Step
 
-`src/main/java/hello/container/HdfsTasklet.java`
+`gs-yarn-batch-restart-container/src/main/java/hello/container/HdfsTasklet.java`
 [source,java]
 ----
-include::complete/src/main/java/hello/container/HdfsTasklet.java[]
+include::complete/gs-yarn-batch-restart-container/src/main/java/hello/container/HdfsTasklet.java[]
 ----
 
 Here you create a `ContainerApplication` class.
 
-`src/main/java/hello/container/ContainerApplication.java`
+`gs-yarn-batch-restart-container/src/main/java/hello/container/ContainerApplication.java`
 [source,java]
 ----
-include::complete/src/main/java/hello/container/ContainerApplication.java[]
+include::complete/gs-yarn-batch-restart-container/src/main/java/hello/container/ContainerApplication.java[]
 ----
 
 
@@ -83,20 +83,20 @@ include::complete/src/main/java/hello/container/ContainerApplication.java[]
 
 Here you create a `AppmasterApplication` class.
 
-`src/main/java/hello/appmaster/AppmasterApplication.java`
+`gs-yarn-batch-restart-appmaster/src/main/java/hello/appmaster/AppmasterApplication.java`
 [source,java]
 ----
-include::complete/src/main/java/hello/appmaster/AppmasterApplication.java[]
+include::complete/gs-yarn-batch-restart-appmaster/src/main/java/hello/appmaster/AppmasterApplication.java[]
 ----
 
 == Create a Yarn Client
 
 Here you create a `ClientApplication` class.
 
-`src/main/java/hello/client/ClientApplication.java`
+`gs-yarn-batch-restart-client/src/main/java/hello/client/ClientApplication.java`
 [source,java]
 ----
-include::complete/src/main/java/hello/client/ClientApplication.java[]
+include::complete/gs-yarn-batch-restart-client/src/main/java/hello/client/ClientApplication.java[]
 ----
 
  - {EnableAutoConfiguration}[`@EnableAutoConfiguration`] tells Spring Boot to start adding beans based on classpath setting, other beans, and various property settings.
