@@ -1,0 +1,33 @@
+spring:
+    batch:
+        job:
+            enabled: false
+    datasource:
+        url: jdbc:hsqldb:hsql://localhost:9001/testdb
+        driverClassName: org.hsqldb.jdbcDriver
+    hadoop:
+        fsUri: hdfs://localhost:8020
+        resourceManagerHost: localhost
+    yarn:
+        batch:
+            enabled: true
+            name: job
+            jobs:
+              - name: job
+                enabled: true
+                next: true
+                failNext: false
+                restart: true
+                failRestart: false
+        appName: batch-restart-db-boot
+        applicationDir: /app/batch-restart-db-boot/
+        client:
+            files:
+              - "file:build/libs/gs-yarn-batch-restart-container-0.1.0.jar"
+              - "file:build/libs/gs-yarn-batch-restart-appmaster-0.1.0.jar"
+            launchcontext:
+                archiveFile: gs-yarn-batch-restart-appmaster-0.1.0.jar
+        appmaster:
+            keepContextAlive: false
+            launchcontext:
+                archiveFile: gs-yarn-batch-restart-container-0.1.0.jar

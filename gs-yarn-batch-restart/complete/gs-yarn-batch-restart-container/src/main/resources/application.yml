@@ -1,0 +1,20 @@
+spring:
+    batch:
+        job:
+            enabled: false
+    hadoop:
+        fsUri: hdfs://localhost:8020
+        resourceManagerHost: localhost
+    yarn:
+        batch:
+            enabled: true
+            name: job
+            jobs:
+              - name: job
+                enabled: true
+                next: true
+                failNext: false
+                restart: true
+                failRestart: false
+        appName: batch-restart-db-boot
+        applicationDir: /app/batch-restart-db-boot/
