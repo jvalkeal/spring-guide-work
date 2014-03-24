@@ -12,7 +12,6 @@ allprojects {
     apply plugin: 'eclipse'
     apply plugin: 'idea'
     version =  '0.1.0'
-
     repositories {
         mavenLocal()
         mavenCentral()
@@ -22,12 +21,10 @@ allprojects {
 
 subprojects { subproject ->
     apply plugin: 'spring-boot'
-
     dependencies {
         compile("org.springframework.data:spring-yarn-boot:2.0.0.BUILD-SNAPSHOT")
         compile("org.springframework.data:spring-yarn-batch:2.0.0.BUILD-SNAPSHOT")
     }
-
     task copyJars(type: Copy) {
         from "$buildDir/libs"
         into "$rootDir/build/libs"
