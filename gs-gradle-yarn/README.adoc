@@ -2,7 +2,7 @@
 tags: [gradle,hadoop,yarn]
 projects: [spring-hadoop]
 ---
-:spring_boot_version: 1.0.0.RC3
+:spring_boot_version: 1.0.0.RC5
 :jdk: http://www.oracle.com/technetwork/java/javase/downloads/index.html
 :toc:
 :icons: font
@@ -32,38 +32,41 @@ If you're not familiar with gradle or don't have it installed, refer to link:/gu
 
 First you set up a Java project for Gradle to build. To keep the focus on Gradle, make the project as simple as possible for now.
 
-include::https://raw.github.com/jvalkeal/spring-guide-work/master/macros/create_directory_structure_yarn_simple_hello.adoc[]
+include::https://raw.github.com/jvalkeal/spring-guide-work/master/macros/create_directory_structure_yarn_hello.adoc[]
 
 Firts, let's create a `ContainerApplication` class.
 
-`src/main/java/hello/container/ContainerApplication.java`
+`gs-gradle-yarn-container/src/main/java/hello/container/ContainerApplication.java`
 [source,java]
 ----
-include::complete/src/main/java/hello/container/ContainerApplication.java[]
+include::complete/gs-gradle-yarn-container/src/main/java/hello/container/ContainerApplication.java[]
 ----
 
 Next, we create an `AppmasterApplication` class.
 
-`src/main/java/hello/appmaster/AppmasterApplication.java`
+`gs-gradle-yarn-appmaster/src/main/java/hello/appmaster/AppmasterApplication.java`
 [source,java]
 ----
-include::complete/src/main/java/hello/appmaster/AppmasterApplication.java[]
+include::complete/gs-gradle-yarn-appmaster/src/main/java/hello/appmaster/AppmasterApplication.java[]
 ----
 
 The last Java class we need to create is a `ClientApplication` class.
 
-`src/main/java/hello/client/ClientApplication.java`
+`gs-gradle-yarn-client/src/main/java/hello/client/ClientApplication.java`
 [source,java]
 ----
-include::complete/src/main/java/hello/client/ClientApplication.java[]
+include::complete/gs-gradle-yarn-client/src/main/java/hello/client/ClientApplication.java[]
 ----
 
-Now we need to create an `application` YAML configuration file.
+Now we need to create an `application` YAML configuration file for all
+sub-projects.
 
-`src/main/resources/application.yml`
+`gs-gradle-yarn-container/src/main/resources/application.yml`
+`gs-gradle-yarn-appmaster/src/main/resources/application.yml`
+`gs-gradle-yarn-client/src/main/resources/application.yml`
 [source,yaml]
 ----
-include::complete/src/main/resources/application.yml[]
+include::complete/gs-gradle-yarn-container/src/main/resources/application.yml[]
 ----
 
 [[initial]]
@@ -78,7 +81,10 @@ We will be using the Spring Boot Gradle plugin so `repository` and `dependency` 
 include::complete/build.gradle[tags=snippetA]
 ----
 
-Belwo that section we add the following -- project version as `0.1.0` and apply plugins for `java`, `eclipse`, `idea` and `spring-boot`.
+Below that section we add the following -- project version as `0.1.0`,
+apply plugins for `java`, `eclipse`, `idea` and add `repositories` to
+resolve all of the third party jar dependencies via Maven
+repositories.
 
 [source,groovy]
 ----

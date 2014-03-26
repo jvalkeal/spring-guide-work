@@ -24,7 +24,10 @@ subdirectory structure:
     ├           └── java
     ├               └── hello
     ├                   └── client
-    └── dist
+    └── src
+        └── test
+            └── java
+                └── hello
 
 for example, with
 
@@ -35,7 +38,7 @@ mkdir -p container/src/main/resources
 mkdir -p container/main/java/hello/container
 mkdir -p client/src/main/resources
 mkdir -p clint/src/main/java/hello/client
-mkdir -p dist
+mkdir -p src/test/java/hello 
 ```
 on *nix systems:
 

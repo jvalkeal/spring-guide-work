@@ -10,77 +10,56 @@ buildscript {
 // end::snippetA[]
 
 // tag::snippetB[]
-version =  '0.1.0'
-
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'spring-boot'
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'eclipse'
+    apply plugin: 'idea'
+    version =  '0.1.0'
+    repositories {
+        mavenCentral()
+        maven { url "http://repo.spring.io/libs-milestone" }
+    }
+}
 // end::snippetB[]
 
 // tag::snippetC[]
-repositories {
-    mavenCentral()
-    maven { url "http://repo.spring.io/libs-milestone" }
+subprojects { subproject ->
+    apply plugin: 'spring-boot'
+    dependencies {
+        compile("org.springframework.data:spring-yarn-boot:2.0.0.RC1")
+    }
+    task copyJars(type: Copy) {
+        from "$buildDir/libs"
+        into "$rootDir/build/libs"
+        include "**/*.jar"
+    }
+    assemble.doLast {copyJars.execute()}
 }
 // end::snippetC[]
 
 // tag::snippetD[]
-dependencies {
-    compile("org.springframework.data:spring-yarn-boot:2.0.0.RC1")
+configure(rootProject) {
+    dependencies {
+        compile project(":gs-gradle-yarn-client")
+        compile project(":gs-gradle-yarn-appmaster")
+        compile project(":gs-gradle-yarn-container")
+    }
 }
 // end::snippetD[]
 
 // tag::snippetE[]
-task clientJar(type: Jar) {
-    appendix = 'client'
-    baseName = 'gs-yarn-gradle'
-    from sourceSets.main.output
-    exclude('**/appmaster/*')
-    exclude('**/container/*')
+project('gs-gradle-yarn-client') {
 }
 
-task clientBoot(type: BootRepackage, dependsOn: clientJar) {
-	withJarTask = clientJar
+project('gs-gradle-yarn-appmaster') {
+}
+
+project('gs-gradle-yarn-container') {
 }
 // end::snippetE[]
 
 // tag::snippetF[]
-task appmasterJar(type: Jar) {
-    appendix = 'appmaster'
-    baseName = 'gs-yarn-gradle'
-    from sourceSets.main.output
-    exclude('**/client/*')
-    exclude('**/container/*')
-}
-
-task containerJar(type: Jar) {
-    appendix = 'container'
-    baseName = 'gs-yarn-gradle'
-    from sourceSets.main.output
-    exclude('**/appmaster/*')
-    exclude('**/client/*')
-}
-
-task appmasterBoot(type: BootRepackage, dependsOn: appmasterJar) {
-    withJarTask = appmasterJar
-}
-
-task containerBoot(type: BootRepackage, dependsOn: containerJar) {
-    withJarTask = containerJar
-}
-// end::snippetF[]
-
-// tag::snippetG[]
-jar.enabled = false
-bootRepackage.enabled = false
-
-task bootJars
-bootJars.dependsOn = [clientBoot,containerBoot,appmasterBoot]
-
-build.dependsOn(bootJars)
-// end::snippetG[]
-
 task wrapper(type: Wrapper) {
     gradleVersion = '1.11'
 }
+// end::snippetF[]
