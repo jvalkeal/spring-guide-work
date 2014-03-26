@@ -4,7 +4,7 @@ buildscript {
         maven { url "http://repo.spring.io/libs-milestone" }
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.0.0.RC3")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.0.0.RC5")
     }
 }
 // end::snippetA[]
@@ -20,7 +20,6 @@ apply plugin: 'spring-boot'
 
 // tag::snippetC[]
 repositories {
-    mavenLocal()
     mavenCentral()
     maven { url "http://repo.spring.io/libs-milestone" }
 }
@@ -28,7 +27,7 @@ repositories {
 
 // tag::snippetD[]
 dependencies {
-    compile("org.springframework.data:spring-yarn-boot:2.0.0.BUILD-SNAPSHOT")
+    compile("org.springframework.data:spring-yarn-boot:2.0.0.RC1")
 }
 // end::snippetD[]
 

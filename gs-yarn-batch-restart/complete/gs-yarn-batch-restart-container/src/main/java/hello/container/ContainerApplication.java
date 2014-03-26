@@ -22,17 +22,17 @@ public class ContainerApplication {
 	@Bean
 	public Step remoteStep1() throws Exception {
 		return steps
-				.get("remoteStep1")
-				.tasklet(tasklet())
-				.build();
+			.get("remoteStep1")
+			.tasklet(tasklet())
+			.build();
 	}
 
 	@Bean
 	public Step remoteStep2() throws Exception {
 		return steps
-				.get("remoteStep2")
-				.tasklet(tasklet())
-				.build();
+			.get("remoteStep2")
+			.tasklet(tasklet())
+			.build();
 	}
 
 	@Bean

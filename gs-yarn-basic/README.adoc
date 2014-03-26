@@ -189,7 +189,7 @@ $ java -jar build/libs/gs-yarn-basic-client-0.1.0.jar
 
 Using a Resource Manager UI you can see status of an application.
 
-image::rm-ui.png[Resource Manager UI]
+image::images/rm-ui.png[Resource Manager UI]
 
 To find Hadoop's application logs, do a little find within a configured userlogs directory.
 

@@ -70,6 +70,8 @@ In above gradle build file we simply create three different jars, each having cl
 [[initial]]
 == Create a Remote Batch Step
 
+Here you create a `HdfsTasklet` class.
+
 `gs-yarn-batch-restart-container/src/main/java/hello/container/HdfsTasklet.java`
 [source,java]
 ----
