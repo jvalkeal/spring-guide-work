@@ -4,7 +4,7 @@ projects: [spring-hadoop]
 ---
 :spring_version: 4.0.1.RELEASE
 :spring_boot_version: 1.0.0.RC5
-:spring_hadoop_version: 2.0.0.M5
+:spring_hadoop_version: 2.0.0.RC1
 :java_version: 1.6
 :Component: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/stereotype/Component.html
 :SpringComponentScanAnnotation: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/context/annotation/ComponentScan.html
@@ -73,7 +73,7 @@ In this guide we are going to show how these 3 components, {YarnClient}[`YarnCli
 
 First you set up a basic build script. You can use any build system you like when building apps with Spring, but the code you need to work with http://gradle.org[Gradle] is included here. If you're not familiar with it, refer to link:/guides/gs/gradle[Building Java Projects with Gradle].
 
-include::https://raw.github.com/jvalkeal/spring-guide-work/master/macros/create_directory_structure_yarn_simple_hello.adoc[]
+include::https://raw.github.com/jvalkeal/spring-guide-work/master/macros/create_directory_structure_yarn_hello.adoc[]
 
 === Create a Gradle build file
 Below is the https://github.com/spring-guides/{project_id}/blob/master/initial/build.gradle[initial Gradle build file]. If you are using link:/guides/gs/sts[Spring Tool Suite (STS)], you can import the guide directly.
@@ -91,20 +91,20 @@ In above gradle build file we simply create three different jars, each having cl
 
 Here you create `ContainerApplication` and `HelloPojo` classes.
 
-`src/main/java/hello/container/ContainerApplication.java`
+`gs-yarn-basic-container/src/main/java/hello/container/ContainerApplication.java`
 [source,java]
 ----
-include::complete/src/main/java/hello/container/ContainerApplication.java[]
+include::complete/gs-yarn-basic-container/src/main/java/hello/container/ContainerApplication.java[]
 ----
 
 In above `ContainerApplication`, notice how we added {SpringConfigurationAnnotation}[`@Configuration`] in a class level itself and {SpringBeanAnnotation}[`@Bean`] for a `helloPojo()` method. We jumped a little ahead what you most likely expected us to do. We previously mentioned {YarnContainer}[`YarnContainer`] component which is an interface towards what you'd execute in your containers. You could define your custom {YarnContainer}[`YarnContainer`] to implement this interface and wrap all logic inside of that implementation.
 
 However, Spring YARN defaults to a {DefaultYarnContainer}[`DefaultYarnContainer`] if none is defined and this default implementation expects to find a specific bean type from a `Spring Application Context` having the real user facing logic what container is supposed to do.
 
-`src/main/java/hello/container/HelloPojo.java`
+`gs-yarn-basic-container/src/main/java/hello/container/HelloPojo.java`
 [source,java]
 ----
-include::complete/src/main/java/hello/container/HelloPojo.java[]
+include::complete/gs-yarn-basic-container/src/main/java/hello/container/HelloPojo.java[]
 ----
 
 `HelloPojo` class is a simple `POJO` in a sense that it doesn't extend any Spring YARN base classes. What we did in this class:
@@ -123,10 +123,10 @@ To demonstrate that we actually have some real functionality in this class, we s
 
 Here you create an `AppmasterApplication` class.
 
-`src/main/java/hello/appmaster/AppmasterApplication.java`
+`gs-yarn-basic-appmaster/src/main/java/hello/appmaster/AppmasterApplication.java`
 [source,java]
 ----
-include::complete/src/main/java/hello/appmaster/AppmasterApplication.java[]
+include::complete/gs-yarn-basic-appmaster/src/main/java/hello/appmaster/AppmasterApplication.java[]
 ----
 
 Application class for {YarnAppmaster}[`YarnAppmaster`] looks even simpler than what we just did for `ClientApplication`. Again the `main()` method uses Spring Boot's `SpringApplication.run()` method to launch an application.
@@ -139,10 +139,10 @@ In real life, however, you most likely need to start adding more custom function
 
 Here you create a `ClientApplication` class.
 
-`src/main/java/hello/client/ClientApplication.java`
+`gs-yarn-basic-client/src/main/java/hello/client/ClientApplication.java`
 [source,java]
 ----
-include::complete/src/main/java/hello/client/ClientApplication.java[]
+include::complete/gs-yarn-basic-client/src/main/java/hello/client/ClientApplication.java[]
 ----
 
  - {EnableAutoConfiguration}[`@EnableAutoConfiguration`] tells Spring Boot to start adding beans based on classpath setting, other beans, and various property settings.
@@ -152,12 +152,14 @@ The `main()` method uses Spring Boot's `SpringApplication.run()` method to launc
 
 == Create an Application Configuration
 
-Create a new yaml configuration file.
+Create a new yaml configuration file for all sub-projects.
 
-`src/main/resources/application.yml`
+`gs-yarn-basic-container/src/main/resources/application.yml`
+`gs-yarn-basic-appmaster/src/main/resources/application.yml`
+`gs-yarn-basic-client/src/main/resources/application.yml`
 [source,yaml]
 ----
-include::complete/src/main/resources/application.yml[]
+include::complete/gs-yarn-basic-client/src/main/resources/application.yml[]
 ----
 
 NOTE: Pay attention to a `yaml` file format which expects correct indentation and no tab characters.
