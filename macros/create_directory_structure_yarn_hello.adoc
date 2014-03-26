@@ -31,9 +31,9 @@ for example, with
 mkdir -p appmaster/src/main/resources
 mkdir -p appmaster/src/main/java/hello/appmaster
 mkdir -p container/src/main/resources
-mkdir -p container/main/java/hello/container
+mkdir -p container/src/main/java/hello/container
 mkdir -p client/src/main/resources
-mkdir -p clint/src/main/java/hello/client
+mkdir -p client/src/main/java/hello/client
 ```
 on *nix systems:
 

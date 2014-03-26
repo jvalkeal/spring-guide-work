@@ -7,73 +7,53 @@ buildscript {
     }
 }
 
-version =  '0.1.0'
-
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'spring-boot'
-
-repositories {
-    mavenCentral()
-    maven { url "http://repo.spring.io/libs-milestone" }
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'eclipse'
+    apply plugin: 'idea'
+    version =  '0.1.0'
+    repositories {
+        mavenCentral()
+        maven { url "http://repo.spring.io/libs-milestone" }
+    }
 }
 
-dependencies {
-    compile("org.springframework.data:spring-yarn-boot:2.0.0.RC1")
-    testCompile("org.springframework.data:spring-yarn-boot-test:2.0.0.RC1")
-    testCompile "org.hamcrest:hamcrest-core:1.3"
-    testCompile "org.hamcrest:hamcrest-library:1.3"
+subprojects { subproject ->
+    apply plugin: 'spring-boot'
+    dependencies {
+        compile("org.springframework.data:spring-yarn-boot:2.0.0.RC1")
+    }
+    task copyJars(type: Copy) {
+        from "$buildDir/libs"
+        into "$rootDir/build/libs"
+        include "**/*.jar"
+    }
+    assemble.doLast {copyJars.execute()}
 }
 
-task clientJar(type: Jar) {
-    appendix = 'client'
-    baseName = 'gs-yarn-testing'
-    from sourceSets.main.output
-    exclude('**/appmaster/*')
-    exclude('**/container/*')
+configure(rootProject) {
+    dependencies {
+        compile project(":gs-yarn-testing-client")
+        compile project(":gs-yarn-testing-appmaster")
+        compile project(":gs-yarn-testing-container")
+        testCompile("org.springframework.data:spring-yarn-boot-test:2.0.0.RC1")
+        testCompile("org.hamcrest:hamcrest-core:1.2.1")
+        testCompile("org.hamcrest:hamcrest-library:1.2.1")
+    }
+    test.dependsOn(':gs-yarn-testing-client:assemble')
+    test.dependsOn(':gs-yarn-testing-appmaster:assemble')
+    test.dependsOn(':gs-yarn-testing-container:assemble')
+    clean.doLast {ant.delete(dir: "target")}
 }
 
-task appmasterJar(type: Jar) {
-    appendix = 'appmaster'
-    baseName = 'gs-yarn-testing'
-    from sourceSets.main.output
-    exclude('**/client/*')
-    exclude('**/container/*')
+project('gs-yarn-testing-client') {
 }
 
-task containerJar(type: Jar) {
-    appendix = 'container'
-    baseName = 'gs-yarn-testing'
-    from sourceSets.main.output
-    exclude('**/appmaster/*')
-    exclude('**/client/*')
+project('gs-yarn-testing-appmaster') {
 }
 
-task clientBoot(type: BootRepackage, dependsOn: clientJar) {
-    withJarTask = clientJar
-    mainClass = 'hello.client.ClientApplication'
+project('gs-yarn-testing-container') {
 }
-
-task appmasterBoot(type: BootRepackage, dependsOn: appmasterJar) {
-    withJarTask = appmasterJar
-    mainClass = 'hello.appmaster.AppmasterApplication'
-}
-
-task containerBoot(type: BootRepackage, dependsOn: containerJar) {
-    withJarTask = containerJar
-    mainClass = 'hello.container.ContainerApplication'
-}
-
-jar.enabled = false
-bootRepackage.enabled = false
-
-task bootJars
-bootJars.dependsOn = [clientBoot,containerBoot,appmasterBoot]
-
-build.dependsOn(bootJars)
-
-clean.doLast {ant.delete(dir: "target")}
 
 task wrapper(type: Wrapper) {
     gradleVersion = '1.11'
