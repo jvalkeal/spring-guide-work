@@ -6,13 +6,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.springframework</groupId>
-    <artifactId>gs-yarn-maven-dist</artifactId>
+    <artifactId>gs-maven-yarn-dist</artifactId>
     <version>0.1.0</version>
     <packaging>pom</packaging>
 
     <parent>
         <groupId>org.springframework</groupId>
-        <artifactId>gs-yarn-maven</artifactId>
+        <artifactId>gs-maven-yarn</artifactId>
         <version>0.1.0</version>
     </parent>
 

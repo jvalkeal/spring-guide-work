@@ -91,49 +91,44 @@ repositories.
 include::complete/build.gradle[tags=snippetB]
 ----
 
-Next we add `repositories` to resolve all of the third party jar dependencies via Maven repositories.
+Next we add `spring-boot` plugin, `spring-yarn-boot` maven
+dependency to all sub-projects. Additionally we create a `copyJars`
+task to copy created jars from a sub-projects into a root project.
+This will make things easier to test and run your application.
+
+The Gradle plugin for `Spring Boot` automatically creates a task to
+repackage a main jar file created from a project.
 
 [source,groovy]
 ----
 include::complete/build.gradle[tags=snippetC]
 ----
 
-Next, we add a dependency on Spring for Apache Hadoop project.
+Next, related to what we previously did, we add a compile dependency
+for all sub-projects. This is required later guided when we create
+tests in a root project.
 
 [source,groovy]
 ----
 include::complete/build.gradle[tags=snippetD]
 ----
 
-We use a custom `Jar` and `BootRepackage` tasks to build a client jar.
-We only want to use include classes meant for `client` so we excluded
-everything under `appmaster` and `container` packages.
+We add configure section for each sub-project. These are empty for now
+but needed in further guides when more specific dependencies are
+added.
 
 [source,groovy]
 ----
 include::complete/build.gradle[tags=snippetE]
 ----
 
-We also create additional jars for `container` and `appmaster` using the same
-logic that we used for `client`.
+Last we just add a normal gradle wrapper task which is not needed for
+project itself but allows to use this build file without installing
+gradle binaries.
 
 [source,groovy]
 ----
 include::complete/build.gradle[tags=snippetF]
-----
-The Gradle plugin for `Spring Boot` automatically creates a task to
-repackage a main jar file created from a project. Since we manually
-created three different jar files  from a single project, it is a
-good practice to disable main `jar` and `bootRepackage` tasks.
-
-Finally, we create a simple task dependency for `build` task to depend
-on `clientBoot`, `containerBoot` and `appmasterBoot` tasks. This way
-all needed jar files will be build and packaged when gradle project is
-built.
-
-[source,groovy]
-----
-include::complete/build.gradle[tags=snippetG]
 ----
 
 include::https://raw.github.com/jvalkeal/spring-guide-work/master/macros/describe_shdp_yarn_deps_gradle.adoc[]
@@ -156,12 +151,9 @@ build/libs/gs-yarn-gradle-container-0.1.0.jar
 build/libs/gs-yarn-gradle-appmaster-0.1.0.jar
 ----
 
-Spring Boot modifies the jars that your build creates. The original jar files are saved with a `.original` extension 
-so you will see those fules in the `build\libs` directory as well. 
-
 You can run the project with `java -jar build/libs/gs-yarn-gradle-client-0.1.0.jar` but we haven't added the code to 
 actually submit the YARN application yet. So, all you will see is some logging mesages. You will build a complete
-application that you can submit to YARN in the other Getting STarted Guides for Spring YARN.
+application that you can submit to YARN in the other Getting Started Guides for Spring YARN.
 
 == Summary
 
