@@ -2,9 +2,9 @@
 tags: [hadoop,yarn,batch]
 projects: [spring-hadoop]
 ---
-:spring_version: 4.0.1.RELEASE
+:spring_version: 4.0.2.RELEASE
 :spring_boot_version: 1.0.0.RC5
-:spring_hadoop_version: 2.0.0.M5
+:spring_hadoop_version: 2.0.0.RC1
 :java_version: 1.6
 :Component: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/stereotype/Component.html
 :SpringComponentScanAnnotation: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/context/annotation/ComponentScan.html
@@ -48,7 +48,7 @@ include::https://raw.github.com/spring-guides/getting-started-macros/master/how_
 
 First you set up a basic build script. You can use any build system you like when building apps with Spring, but the code you need to work with http://gradle.org[Gradle] is included here. If you're not familiar with it, refer to link:/guides/gs/gradle[Building Java Projects with Gradle].
 
-include::https://raw.github.com/jvalkeal/spring-guide-work/master/macros/create_directory_structure_yarn_simple_hello.adoc[]
+include::https://raw.github.com/jvalkeal/spring-guide-work/master/macros/create_directory_structure_yarn_test_hello.adoc[]
 
 === Create a Gradle build file
 Below is the https://github.com/spring-guides/{project_id}/blob/master/initial/build.gradle[initial Gradle build file]. If you are using link:/guides/gs/sts[Spring Tool Suite (STS)], you can import the guide directly.
@@ -113,10 +113,10 @@ Partitioning, read the Spring Batch reference documentation.
 
 Here you create a `PrintTasklet` class.
 
-`src/main/java/hello/container/PrintTasklet.java`
+`gs-yarn-batch-processing-container/src/main/java/hello/container/PrintTasklet.java`
 [source,java]
 ----
-include::complete/src/main/java/hello/container/PrintTasklet.java[]
+include::complete/gs-yarn-batch-processing-container/src/main/java/hello/container/PrintTasklet.java[]
 ----
 
 `Tasklet` in Spring Batch is one of the easiest concepts to use when
@@ -130,10 +130,10 @@ itself is executed.
 
 Here you create a `ContainerApplication` class.
 
-`src/main/java/hello/container/ContainerApplication.java`
+`gs-yarn-batch-processing-container/src/main/java/hello/container/ContainerApplication.java`
 [source,java]
 ----
-include::complete/src/main/java/hello/container/ContainerApplication.java[]
+include::complete/gs-yarn-batch-processing-container/src/main/java/hello/container/ContainerApplication.java[]
 ----
 
 - `@EnableYarnRemoteBatchProcessing` tells Spring to enable Batch
@@ -149,10 +149,10 @@ include::complete/src/main/java/hello/container/ContainerApplication.java[]
 
 Here you create a `AppmasterApplication` class.
 
-`src/main/java/hello/appmaster/AppmasterApplication.java`
+`gs-yarn-batch-processing-appmaster/src/main/java/hello/appmaster/AppmasterApplication.java`
 [source,java]
 ----
-include::complete/src/main/java/hello/appmaster/AppmasterApplication.java[]
+include::complete/gs-yarn-batch-processing-appmaster/src/main/java/hello/appmaster/AppmasterApplication.java[]
 ----
 
 - `@EnableYarnBatchProcessing` tells Spring to enable Batch processing
@@ -164,14 +164,22 @@ include::complete/src/main/java/hello/appmaster/AppmasterApplication.java[]
 
 Here you create a `ClientApplication` class.
 
-`src/main/java/hello/client/ClientApplication.java`
+`gs-yarn-batch-processing-client/src/main/java/hello/client/ClientApplication.java`
 [source,java]
 ----
-include::complete/src/main/java/hello/client/ClientApplication.java[]
+include::complete/gs-yarn-batch-processing-client/src/main/java/hello/client/ClientApplication.java[]
 ----
 
 `ClientApplication` is similar what we've used in other examples and
 its only purpose is to submit an application.
+
+== Create a JUnit Test Class
+
+`src/test/java/hello/AppTests.java`
+[source,java]
+----
+include::complete/src/test/java/hello/AppTests.java[]
+----
 
 == Summary
 

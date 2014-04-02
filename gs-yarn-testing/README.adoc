@@ -2,9 +2,9 @@
 tags: [hadoop,yarn,boot]
 projects: [spring-hadoop]
 ---
-:spring_version: 4.0.1.RELEASE
-:spring_boot_version: 1.0.0.RC3
-:spring_hadoop_version: 2.0.0.M5
+:spring_version: 4.0.2.RELEASE
+:spring_boot_version: 1.0.0.RC5
+:spring_hadoop_version: 2.0.0.RC1
 :jdk: http://www.oracle.com/technetwork/java/javase/downloads/index.html
 :toc:
 :icons: font
@@ -35,7 +35,7 @@ If you're not familiar with gradle, refer to link:/guides/gs/gradle[Building Jav
 
 Focus on this guide is to use `JUnit` to test your sample application. We have already prepared a project for gradle and application files based on sample link:/guides/gs/yarn-basic[YARN Basic Sample]. What is left for you is to create a `JUnit` test class.
 
-include::https://raw.github.com/jvalkeal/spring-guide-work/master/macros/create_directory_structure_yarn_simple_test_hello.adoc[]
+include::https://raw.github.com/jvalkeal/spring-guide-work/master/macros/create_directory_structure_yarn_test_hello.adoc[]
 
 [[initial]]
 == Create a JUnit Test Class

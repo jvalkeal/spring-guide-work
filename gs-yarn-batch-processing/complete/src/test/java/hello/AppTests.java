@@ -15,16 +15,12 @@ import java.util.concurrent.TimeUnit;
 import org.apache.hadoop.yarn.api.records.YarnApplicationState;
 import org.junit.Test;
 import org.springframework.core.io.Resource;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.yarn.boot.test.junit.AbstractBootYarnClusterTests;
-import org.springframework.yarn.boot.test.junit.AbstractBootYarnClusterTests.EmptyConfig;
-import org.springframework.yarn.test.context.MiniYarnCluster;
-import org.springframework.yarn.test.context.YarnDelegatingSmartContextLoader;
+import org.springframework.yarn.test.context.MiniYarnClusterTest;
 import org.springframework.yarn.test.junit.ApplicationInfo;
 import org.springframework.yarn.test.support.ContainerLogUtils;
 
-@ContextConfiguration(loader = YarnDelegatingSmartContextLoader.class, classes = EmptyConfig.class)
-@MiniYarnCluster
+@MiniYarnClusterTest
 public class AppTests extends AbstractBootYarnClusterTests {
 
 	@Test
