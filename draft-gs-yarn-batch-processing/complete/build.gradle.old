@@ -1,0 +1,68 @@
+buildscript {
+    repositories {
+        maven { url "http://repo.spring.io/libs-milestone" }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.0.0.RELEASE")
+    }
+}
+
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'eclipse'
+    apply plugin: 'idea'
+    version =  '0.1.0'
+    repositories {
+        mavenCentral()
+        maven { url "http://repo.spring.io/libs-milestone" }
+    }
+    configurations {
+        compile.exclude group: "org.slf4j", module: "slf4j-log4j12"
+        runtime.exclude group: "org.slf4j", module: "slf4j-log4j12"
+    }
+}
+
+subprojects { subproject ->
+    apply plugin: 'spring-boot'
+    dependencies {
+        compile("org.springframework.data:spring-yarn-boot:2.0.0.RC2")
+        compile("org.springframework.data:spring-yarn-batch:2.0.0.RC2")
+    }
+    task copyJars(type: Copy) {
+        from "$buildDir/libs"
+        into "$rootDir/build/libs"
+        include "**/*.jar"
+    }
+    assemble.doLast {copyJars.execute()}
+}
+
+configure(rootProject) {
+    dependencies {
+        compile project(":gs-yarn-batch-processing-client")
+        compile project(":gs-yarn-batch-processing-appmaster")
+        compile project(":gs-yarn-batch-processing-container")
+        testCompile("org.springframework.data:spring-yarn-boot-test:2.0.0.RC2")
+        testCompile("org.hamcrest:hamcrest-core:1.2.1")
+        testCompile("org.hamcrest:hamcrest-library:1.2.1")
+    }
+    test.dependsOn(':gs-yarn-batch-processing-client:assemble')
+    test.dependsOn(':gs-yarn-batch-processing-appmaster:assemble')
+    test.dependsOn(':gs-yarn-batch-processing-container:assemble')
+    clean.doLast {ant.delete(dir: "target")}
+}
+
+project('gs-yarn-batch-processing-client') {
+}
+
+project('gs-yarn-batch-processing-appmaster') {
+    dependencies {
+        runtime("org.springframework.boot:spring-boot-starter-batch:1.0.0.RELEASE")
+    }
+}
+
+project('gs-yarn-batch-processing-container') {
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.11'
+}
