@@ -10,7 +10,7 @@ spring:
                 patterns:
                   - "*app*jar"
             files:
-              - "file:gs-yarn-basic-single-dist/target/gs-yarn-basic-single-dist/gs-yarn-basic-single-app-0.1.0.jar"
+              - "file:gs-yarn-basic-single-app/target/gs-yarn-basic-single-app-0.1.0.jar"
             launchcontext:
                 archiveFile: gs-yarn-basic-single-app-0.1.0.jar
         appmaster:

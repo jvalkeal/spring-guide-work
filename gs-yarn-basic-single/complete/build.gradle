@@ -11,10 +11,11 @@ allprojects {
     apply plugin: 'base'
 }
 
-subprojects { subproject ->
+project('gs-yarn-basic-single-app') {
     apply plugin: 'java'
     apply plugin: 'eclipse'
     apply plugin: 'idea'
+    apply plugin: 'spring-boot'
     version =  '0.1.0'
     repositories {
         mavenCentral()
@@ -22,29 +23,17 @@ subprojects { subproject ->
     }
     dependencies {
         compile("org.springframework.data:spring-yarn-boot:2.0.0.RC2")
-    }
-    task copyJars(type: Copy) {
-        from "$buildDir/libs"
-        into "$rootDir/gs-yarn-basic-single-dist/target/gs-yarn-basic-single-dist/"
-        include "**/*.jar"
-    }
-    assemble.doLast {copyJars.execute()}
-}
-
-project('gs-yarn-basic-single-app') {
-    apply plugin: 'spring-boot'
-}
-
-project('gs-yarn-basic-single-dist') {
-    dependencies {
-        compile project(":gs-yarn-basic-single-app")
         testCompile("org.springframework.data:spring-yarn-boot-test:2.0.0.RC2")
         testCompile("org.hamcrest:hamcrest-core:1.2.1")
         testCompile("org.hamcrest:hamcrest-library:1.2.1")
     }
-    test.dependsOn(':gs-yarn-basic-single-app:assemble')
+    task copyJars(type: Copy) {
+        from "$buildDir/libs"
+        into "$rootDir/gs-yarn-basic-single-app/target/"
+        include "**/*.jar"
+    }
+    assemble.doLast {copyJars.execute()}
     clean.doLast {ant.delete(dir: "target")}
-    jar.enabled = false
 }
 
 task wrapper(type: Wrapper) {
