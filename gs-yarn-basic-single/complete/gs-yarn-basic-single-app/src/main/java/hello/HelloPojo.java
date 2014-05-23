@@ -20,7 +20,7 @@ public class HelloPojo {
 	private Configuration configuration;
 
 	@OnContainerStart
-	public void publicVoidNoArgsMethod() throws Exception {
+	public void onStart() throws Exception {
 		log.info("Hello from HelloPojo");
 		log.info("About to list from hdfs root content");
 
