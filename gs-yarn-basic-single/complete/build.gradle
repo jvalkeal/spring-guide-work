@@ -18,12 +18,13 @@ project('gs-yarn-basic-single-app') {
     apply plugin: 'spring-boot'
     version =  '0.1.0'
     repositories {
+        mavenLocal()
         mavenCentral()
         maven { url "http://repo.spring.io/libs-milestone" }
     }
     dependencies {
-        compile("org.springframework.data:spring-yarn-boot:2.0.0.RC2")
-        testCompile("org.springframework.data:spring-yarn-boot-test:2.0.0.RC2")
+        compile("org.springframework.data:spring-yarn-boot:2.0.0.BUILD-SNAPSHOT")
+        testCompile("org.springframework.data:spring-yarn-boot-test:2.0.0.BUILD-SNAPSHOT")
         testCompile("org.hamcrest:hamcrest-core:1.2.1")
         testCompile("org.hamcrest:hamcrest-library:1.2.1")
     }

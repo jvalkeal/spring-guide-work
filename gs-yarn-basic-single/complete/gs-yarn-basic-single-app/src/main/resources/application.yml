@@ -6,6 +6,8 @@ spring:
         appName: gs-yarn-basic-single
         applicationDir: /app/gs-yarn-basic-single/
         client:
+            startup:
+                action: submit
             localizer:
                 patterns:
                   - "*app*jar"
